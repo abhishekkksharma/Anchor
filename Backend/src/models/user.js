@@ -1,0 +1,97 @@
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 50,
+    },
+
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+
+    // Only one avatar field
+    avatar: {
+      type: String,   // URL or preset avatar name
+      default: "",    // e.g. "avatar1.png"
+    },
+
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+
+    savedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    lastLogin: {
+      type: Date,
+    }
+  },
+  { timestamps: true }
+);
+
+const User = mongoose.model("user", userSchema);
+module.exports = User;
+
+// const mongoose = require('mongoose');
+
+// const userSchema = new mongoose.Schema({
+//     name:{
+//         type: String,
+//         required: true,
+//     },
+//     email:{
+//         type: String,
+//         required: true,
+//         unique: true,
+//     },
+//     password:{
+//         type: String,
+//         required: true,
+//     },
+//     isAdmin:{
+//         type:Boolean,
+//     }
+// },{timestamps:true});
+
+// const User = mongoose.model('user', userSchema);
+
+// module.exports = User;

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-export const ThemeToggle = () => {
+export const ThemeToggle = ({ className = "" }) => {
     const [theme, setTheme] = useState(() => {
-        // Check localStorage first
         const stored = localStorage.getItem('theme');
         if (stored) return stored;
 
-        // Then check system preference
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             return 'dark';
         }
@@ -20,11 +18,9 @@ export const ThemeToggle = () => {
         localStorage.setItem('theme', theme);
     }, [theme]);
 
-    // Listen for system theme changes
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = (e) => {
-            // Only auto-switch if no manual preference saved
             if (!localStorage.getItem('theme')) {
                 setTheme(e.matches ? 'dark' : 'light');
             }
@@ -41,10 +37,10 @@ export const ThemeToggle = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="relative p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+            className={`relative p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors ${className}`}
             aria-label="Toggle theme"
         >
-            {/* Sun icon - visible in dark mode */}
+            {/* Sun icon */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -68,7 +64,7 @@ export const ThemeToggle = () => {
                 <path d="m19.07 4.93-1.41 1.41" />
             </svg>
 
-            {/* Moon icon - visible in light mode */}
+            {/* Moon icon */}
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -88,3 +84,4 @@ export const ThemeToggle = () => {
 };
 
 export default ThemeToggle;
+    
