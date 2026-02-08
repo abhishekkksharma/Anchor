@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 dotenv.config();
 const userRoutes = require("./routes/user"); // example
 const adminRoutes = require('./routes/admin');
+const {} = require('./mildewares/authMiddleware');
+const authMiddleware = require("./mildewares/authMiddleware");
 
 // middlewares
 app.use(cors());
