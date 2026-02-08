@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GridSmallBackground } from "../components/ui/grid-small-background";
-import Navbar from "@/components/navbar";
+import Navbar from "../components/header/navbar";
+import { useAuth } from "../context/AuthContext";
 
 
 const API_BASE = "http://localhost:5000/user";
@@ -13,6 +15,8 @@ export default function Auth() {
     password: "",
   });
   const [message, setMessage] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,7 +38,9 @@ export default function Auth() {
 
       if (!res.ok) throw new Error(data.message || "Something went wrong");
 
-      setMessage(data.message || `${isLogin ? "Login" : "Signup"} successful!`);
+      // On successful login/signup, store user and redirect to home
+      login({ email: form.email, ...data.user });
+      navigate("/");
 
     } catch (err) {
       setMessage(err.message);
@@ -43,7 +49,7 @@ export default function Auth() {
 
   return (
     <GridSmallBackground>
-        <Navbar/>
+      <Navbar />
       <div className="w-full max-w-sm mx-auto p-6 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700">
         <h2 className="text-2xl font-bold text-center mb-4 text-black dark:text-white">
           {isLogin ? "Login" : "Signup"}

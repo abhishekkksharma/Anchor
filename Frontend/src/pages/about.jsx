@@ -1,7 +1,7 @@
 import React from "react";
-import Navbar from "../components/navbar";
+import Navbar from "../components/header/navbar";
 import { GridSmallBackground } from "../components/ui/grid-small-background";
-import Hero  from "@/components/about/Hero";
+import Hero  from "../components/about/Hero";
 
 const About = () => {
   return (

@@ -1,0 +1,267 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import Navbar from "../components/header/navbar";
+import Logo2 from "../assets/logo2.png";
+
+const API_BASE = "http://localhost:5000/user";
+
+export default function Login() {
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
+    });
+    const [errors, setErrors] = useState({});
+    const [message, setMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!form.email.trim()) {
+            newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+            newErrors.email = "Please enter a valid email";
+        }
+
+        if (!form.password) {
+            newErrors.password = "Password is required";
+        } else if (form.password.length < 6) {
+            newErrors.password = "Password must be at least 6 characters";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: "" });
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validateForm()) return;
+
+        setIsLoading(true);
+        setMessage("");
+
+        try {
+            const res = await fetch(`${API_BASE}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || "Invalid credentials");
+
+            login({ email: form.email, ...data.user });
+            navigate("/");
+        } catch (err) {
+            setMessage(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <>
+            <Navbar />
+            <div className="min-h-screen flex bg-white dark:bg-zinc-950">
+                {/* Left Panel - Decorative */}
+                <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 dark:from-sky-900/30 dark:via-blue-900/20 dark:to-indigo-900/30 items-center justify-center p-12">
+                    {/* Decorative elements */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-300/30 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl"></div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-teal-300/20 dark:bg-teal-500/10 rounded-full blur-2xl"></div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="relative z-10 text-center">
+                        <div className="w-32 h-32 mx-auto mb-8 rounded-2xl bg-white/80 dark:bg-zinc-800/80 backdrop-blur shadow-2xl flex items-center justify-center">
+                            <span className="text-5xl font-bold bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                A
+                            </span>
+                        </div>
+                        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
+                            Welcome Back
+                        </h1>
+                        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md">
+                            Sign in to continue your journey with Anchor.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right Panel - Form */}
+                <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
+                    <div className="w-full max-w-md">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-8">
+                            <Link to="/">
+                                <div className="flex gap-4 items-center">
+                                    <div className="pl-10 flex items-center gap-2">
+                                        <img src={Logo2} className="h-25 dark:invert" alt="logo" />
+                                    </div>
+                                </div>
+                            </Link>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                Don't have an account?{" "}
+                                <Link
+                                    to="/signup"
+                                    className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                                >
+                                    Sign up
+                                </Link>
+                            </p>
+                        </div>
+
+                        {/* Title */}
+                        <div className="mb-8">
+                            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                                Sign in
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400">
+                                Enter your credentials to access your account
+                            </p>
+                        </div>
+
+                        {/* Error Message */}
+                        {message && (
+                            <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                                <p className="text-sm text-red-600 dark:text-red-400 text-center">
+                                    {message}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Email Field */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Email
+                                </label>
+                                <div className="relative">
+                                    <svg
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="you@example.com"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border ${errors.email
+                                                ? "border-red-500"
+                                                : "border-gray-200 dark:border-zinc-700"
+                                            } bg-gray-50 dark:bg-zinc-800/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                                    />
+                                </div>
+                                {errors.email && (
+                                    <p className="text-xs text-red-500">{errors.email}</p>
+                                )}
+                            </div>
+
+                            {/* Password Field */}
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <svg
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                        />
+                                    </svg>
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        placeholder="••••••••"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border ${errors.password
+                                                ? "border-red-500"
+                                                : "border-gray-200 dark:border-zinc-700"
+                                            } bg-gray-50 dark:bg-zinc-800/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
+                                    />
+                                </div>
+                                {errors.password && (
+                                    <p className="text-xs text-red-500">{errors.password}</p>
+                                )}
+                            </div>
+
+                            {/* Submit Button */}
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                            <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                                fill="none"
+                                            />
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            />
+                                        </svg>
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    "Sign In"
+                                )}
+                            </button>
+                        </form>
+
+                        {/* Mobile Sign Up Link */}
+                        <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 lg:hidden">
+                            Don't have an account?{" "}
+                            <Link
+                                to="/signup"
+                                className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                            >
+                                Sign up
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
