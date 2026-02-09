@@ -12,6 +12,7 @@ import {
   Avatar4,
   Avatar5,
 } from "../assets/Avatars/index";
+import AuthPageHero from "@/components/AuthPages/AuthPageHero";
 
 const API_BASE = "http://localhost:5000/user";
 
@@ -34,6 +35,7 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -114,13 +116,14 @@ export default function Signup() {
 
       if (!res.ok) throw new Error(data.message || "Signup failed");
 
+      // Pass both user data and token to login
       login({
         ...data.user,
         email: form.email,
         name: form.name,
         username: form.username,
         avatar: form.avatar,
-      });
+      }, data.token);
       navigate("/");
     } catch (err) {
       setMessage(err.message);
@@ -134,31 +137,9 @@ export default function Signup() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen flex bg-white dark:bg-zinc-950">
+      <div className="min-h-screen lg:pt-0 pt-20 flex bg-white dark:bg-zinc-950">
         {/* Left Panel - Decorative */}
-        <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 dark:from-sky-900/30 dark:via-blue-900/20 dark:to-indigo-900/30 items-center justify-center p-12">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-20 left-20 w-72 h-72 bg-blue-300/30 dark:bg-blue-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-300/30 dark:bg-purple-500/10 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-teal-300/20 dark:bg-teal-500/10 rounded-full blur-2xl"></div>
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 text-center">
-            <div className="w-32 h-32 mx-auto mb-8 rounded-2xl bg-white/80 dark:bg-zinc-800/80 backdrop-blur shadow-2xl flex items-center justify-center">
-              <span className="text-5xl font-bold bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                A
-              </span>
-            </div>
-            <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-4">
-              Welcome to Anchor
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-md">
-              Join our community and start your journey today.
-            </p>
-          </div>
-        </div>
+        <AuthPageHero />
 
         {/* Right Panel - Form */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
@@ -266,7 +247,7 @@ export default function Signup() {
                   <input
                     type="text"
                     name="name"
-                    placeholder="John Doe"
+                    placeholder="Name"
                     value={form.name}
                     onChange={handleChange}
                     className={`w-full pl-10 pr-4 py-3 rounded-xl border ${errors.name
@@ -302,7 +283,7 @@ export default function Signup() {
                   <input
                     type="text"
                     name="username"
-                    placeholder="johndoe123"
+                    placeholder="Username"
                     value={form.username}
                     onChange={handleChange}
                     className={`w-full pl-10 pr-4 py-3 rounded-xl border ${errors.username
@@ -372,16 +353,32 @@ export default function Signup() {
                     />
                   </svg>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
                     value={form.password}
                     onChange={handleChange}
-                    className={`w-full pl-10 pr-4 py-3 rounded-xl border ${errors.password
+                    className={`w-full pl-10 pr-12 py-3 rounded-xl border ${errors.password
                       ? "border-red-500"
                       : "border-gray-200 dark:border-zinc-700"
                       } bg-gray-50 dark:bg-zinc-800/50 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  >
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    )}
+                  </button>
                 </div>
                 {/* Password Requirements - inline, only show when typing */}
                 {form.password && (

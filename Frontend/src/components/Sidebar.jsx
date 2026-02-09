@@ -9,7 +9,8 @@ import {
     Mail,
     Info,
     Menu,
-    ChevronFirst
+    ChevronFirst,
+    ArrowBigLeft
 } from "lucide-react";
 
 // Import avatars
@@ -58,7 +59,7 @@ const Sidebar = () => {
 
     return (
         <aside
-            className={`fixed top-24 left-60 pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col z-40 shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"
+            className={`fixed top-20 left-60 pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col z-40 shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"
                 }`}
         >
             {/* User Profile Card - Expanded View */}
@@ -77,7 +78,8 @@ const Sidebar = () => {
                                 onClick={() => setIsExpanded(false)}
                                 className="absolute top-2 right-2 p-1.5 bg-white/80 dark:bg-white/20 backdrop-blur-sm rounded-full text-gray-700 dark:text-white hover:bg-white dark:hover:bg-white/30 transition-all duration-300 shadow-sm hover:scale-110"
                             >
-                                <ChevronFirst size={16} />
+                                {/* <ChevronFirst size={16} /> */}
+                                <ArrowBigLeft size={16} />
                             </button>
                         </div>
 

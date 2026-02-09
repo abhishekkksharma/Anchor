@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
     // Only one avatar field
     avatar: {
       type: String,   // URL or preset avatar name
-      default: "",    // e.g. "avatar1.png"
+      default: "https://ui-avatars.com/api/?background=random&name=User",    // Default avatar
     },
 
     posts: [
@@ -68,7 +68,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("user", userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;
 
 // const mongoose = require('mongoose');
