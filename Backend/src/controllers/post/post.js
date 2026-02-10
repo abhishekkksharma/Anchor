@@ -37,22 +37,53 @@ async function handleCreatePost(req, res) {
     }
 }
 
+// async function handleGetAllPosts(req, res) {
+//     try {
+//         const posts = await Post.find().populate("author", "username name avatar");
+//         return res.status(200).json({
+//             message: 'Posts fetched successfully',
+//             posts
+//         });
+//     } catch (error) {
+//         console.log("Get All Posts Error:", error.message);
+//         console.log("Full Error:", error);
+
+//         return res.status(500).json({
+//             message: 'Internal server error',
+//             error: error.message  // temporarily showing error for debugging
+//         });
+//     }
+// }
+
 async function handleGetAllPosts(req, res) {
     try {
-        const posts = await Post.find().populate("author", "username name avatar");
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; 
+        const skip = (page - 1) * limit;
+
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })            // latest first
+            .skip(skip)
+            .limit(limit)
+            .populate("author", "username name avatar");
+
+        const totalPosts = await Post.countDocuments();
+
         return res.status(200).json({
-            message: 'Posts fetched successfully',
+            message: "Posts fetched successfully",
+            currentPage: page,
+            totalPages: Math.ceil(totalPosts / limit),
             posts
         });
+
     } catch (error) {
         console.log("Get All Posts Error:", error.message);
-        console.log("Full Error:", error);
-
         return res.status(500).json({
-            message: 'Internal server error',
-            error: error.message  // temporarily showing error for debugging
+            message: "Internal server error",
+            error: error.message
         });
     }
 }
+
 
 module.exports = { handleCreatePost, handleGetAllPosts };

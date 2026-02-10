@@ -1,48 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/header/navbar';
 import UploadPost from '@/components/post/UploadPost';
 import Post from '@/components/post/Post';
-import {
-  Avatar1,
-  Avatar2,
-  Avatar3,
-  Avatar4,
-  Avatar5,
-} from "../assets/Avatars/index";
-
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const loaderRef = useRef(null);
+    const [initialLoad, setInitialLoad] = useState(true);
+    const fetchingRef = useRef(false); // Prevent duplicate fetches
 
-    // Fetch posts from API
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:5000/user/post/allPosts', {
+    const fetchPosts = async (pageNum) => {
+        // Prevent duplicate requests
+        if (fetchingRef.current || loading) return;
+        if (!hasMore && pageNum > 1) return;
+
+        fetchingRef.current = true;
+        setLoading(true);
+        
+        try {
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(
+                `http://localhost:5000/user/post/allPosts?page=${pageNum}`,
+                {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
-                });
-                // console.log(posts);
-                
-                if (response.ok) {
-                    const data = await response.json(); 
-                    setPosts(data.posts || []);
                 }
-            } catch (error) {
-                console.error('Error fetching posts:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+            );
 
-        fetchPosts();
-    }, []);
-    
-    // Handle new post created
+            if (response.ok) {
+                const data = await response.json();
+                const newPosts = data.posts || [];
+
+                setPosts(prev => {
+                    if (pageNum === 1) {
+                        return newPosts;
+                    }
+
+                    // Filter out duplicates
+                    const existingIds = new Set(prev.map(p => p._id));
+                    const uniqueNewPosts = newPosts.filter(p => !existingIds.has(p._id));
+
+                    return [...prev, ...uniqueNewPosts];
+                });
+
+                // Check if we've reached the end
+                if (pageNum >= data.totalPages || newPosts.length === 0) {
+                    setHasMore(false);
+                } else {
+                    setHasMore(true);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        } finally {
+            setLoading(false);
+            setInitialLoad(false);
+            fetchingRef.current = false;
+        }
+    };
+
+    // Initial load only
+    useEffect(() => {
+        fetchPosts(1);
+    }, []); // Empty dependency array - only run once on mount
+
+    // Infinite Scroll (Intersection Observer)
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const first = entries[0];
+                if (first.isIntersecting && hasMore && !loading && !fetchingRef.current) {
+                    setPage(prev => {
+                        const nextPage = prev + 1;
+                        fetchPosts(nextPage);
+                        return nextPage;
+                    });
+                }
+            },
+            {
+                threshold: 0.1,
+                rootMargin: "100px",
+            }
+        );
+
+        const currentLoader = loaderRef.current;
+        if (currentLoader) observer.observe(currentLoader);
+
+        return () => {
+            if (currentLoader) observer.unobserve(currentLoader);
+        };
+    }, [hasMore, loading]); // Removed page from dependencies
+
     const handleNewPost = (newPost) => {
         setPosts(prev => [newPost, ...prev]);
     };
@@ -51,36 +105,43 @@ const Home = () => {
         <div className='min-h-screen bg-neutral-50 dark:bg-black'>
             <Navbar />
 
-            {/* Sidebar - Hidden on mobile/tablet */}
             <div className="hidden xl:block">
                 <Sidebar />
             </div>
 
-            {/* Main Content Area - Responsive layout */}
-            {/* Sidebar: left-60 (240px) + w-64 (256px) + 20px gap = 516px */}
             <main className='min-h-screen pt-24 pb-20 xl:ml-[60px] flex justify-center px-4'>
                 <div className='w-full max-w-xl flex flex-col gap-6'>
-                    {/* Upload Post */}
+
+                    {/* Create Post */}
                     <UploadPost onSubmit={handleNewPost} />
 
-                    {/* Loading State */}
-                    {loading && (
-                        <div className="text-center py-8 text-neutral-500">
-                            Loading posts...
+                    {/* Posts Feed */}
+                    {posts.map((post) => (
+                        <Post key={post._id} post={post} />
+                    ))}
+
+                    {/* Infinite scroll loader */}
+                    <div ref={loaderRef} className="flex items-center justify-center w-full py-4">
+                        {loading && (
+                            <div className="text-neutral-500 text-sm">
+                                Loading more posts...
+                            </div>
+                        )}
+                    </div>
+
+                    {/* End of Feed */}
+                    {!hasMore && posts.length > 0 && (
+                        <div className="text-center py-4 text-neutral-500 text-sm">
+                            No more posts to show.
                         </div>
                     )}
 
-                    {/* Posts Feed - Empty State */}
-                    {!loading && posts.length === 0 && (
+                    {/* Empty State */}
+                    {!loading && posts.length === 0 && !initialLoad && (
                         <div className="text-center py-8 text-neutral-500">
                             No posts yet. Be the first to share something!
                         </div>
                     )}
-
-                    {/* Map Posts */}
-                    {posts.map((post) => (
-                        <Post key={post._id} post={post} />
-                    ))}
                 </div>
             </main>
         </div>

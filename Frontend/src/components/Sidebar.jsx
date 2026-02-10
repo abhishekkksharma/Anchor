@@ -89,7 +89,7 @@ const Sidebar = () => {
                                 <img
                                     src={userAvatar}
                                     alt={username}
-                                    className="w-14 h-14 rounded-full object-cover shadow-lg ring-3 ring-white dark:ring-gray-800 transition-transform duration-300 hover:scale-110"
+                                    className="w-18 h-18 rounded-full object-cover shadow-lg ring-3 ring-white dark:ring-gray-800 transition-transform duration-300 hover:scale-110"
                                 />
                             ) : (
                                 <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg ring-3 ring-white dark:ring-gray-800 transition-transform duration-300 hover:scale-110">

@@ -1,42 +1,48 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Image, Send, Globe } from 'lucide-react';
-import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars';
+import React, { useState, useRef, useEffect } from "react";
+import { X, Image, Send, Globe } from "lucide-react";
+import {
+  Avatar1,
+  Avatar2,
+  Avatar3,
+  Avatar4,
+  Avatar5,
+} from "../../assets/Avatars";
 
 // Avatar mapping - keys match database values
 const avatarMap = {
-  'Avatar1': Avatar1,
-  'Avatar2': Avatar2,
-  'Avatar3': Avatar3,
-  'Avatar4': Avatar4,
-  'Avatar5': Avatar5,
+  Avatar1: Avatar1,
+  Avatar2: Avatar2,
+  Avatar3: Avatar3,
+  Avatar4: Avatar4,
+  Avatar5: Avatar5,
 };
 
 // Compact inline component (what user sees on the page)
 function UploadPostCompact({ onClick }) {
-  const [user, setUser] = useState({ name: '', username: '', avatar: '' });
+  const [user, setUser] = useState({ name: "", username: "", avatar: "" });
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
         const avatarImage = avatarMap[userData.avatar] || Avatar1;
         setUser({
-          name: userData.name || 'User',
-          username: userData.username || 'username',
-          avatar: avatarImage
+          name: userData.name || "User",
+          username: userData.username || "username",
+          avatar: avatarImage,
         });
       } catch (error) {
-        console.error('Error parsing user data:', error);
+        console.error("Error parsing user data:", error);
       }
     }
   }, []);
 
   const getInitials = (name) => {
     return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -44,47 +50,53 @@ function UploadPostCompact({ onClick }) {
   return (
     <div
       onClick={onClick}
-      className="bg-white dark:bg-neutral-900 rounded-2xl p-4 cursor-pointer hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors border border-neutral-200 dark:border-neutral-800"
+      className="bg-white dark:bg-neutral-900 rounded-xl p-3 cursor-pointer 
+             hover:bg-neutral-50 dark:hover:bg-neutral-800/50 
+             transition-colors border border-neutral-200 dark:border-neutral-800"
     >
-      {/* Top row - Avatar and placeholder */}
-      <div className="flex items-start gap-3">
+      {/* Avatar + Placeholder */}
+      <div className="flex items-center gap-2">
         {user.avatar ? (
           <img
             src={user.avatar}
             alt={user.name}
-            className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+            className="w-9 h-9 rounded-full object-cover"
           />
         ) : (
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-            {getInitials(user.name || 'U')}
+          <div
+            className="w-9 h-9 rounded-full 
+                      bg-gradient-to-br from-blue-500 to-purple-600 
+                      flex items-center justify-center 
+                      text-white font-semibold text-xs"
+          >
+            {getInitials(user.name || "U")}
           </div>
         )}
-        <div className="flex-1 pt-2">
-          <span className="text-neutral-400 dark:text-neutral-500 text-lg">
-            Start writing...
-          </span>
-        </div>
+
+        <span className="text-neutral-400 dark:text-neutral-500 text-base">
+          Start writing...
+        </span>
       </div>
 
-      {/* Everyone can reply */}
-      <div className="flex items-center gap-2  mt-3 pl-13">
-        <div className="flex items-center gap-1.5 text-blue-500 text-sm font-medium">
-          <Globe className="w-4 h-4" />
-          <span>Share Something</span>
-        </div>
+      {/* Share Something (compact) */}
+      <div className="flex items-center gap-1.5 mt-2 ml-10">
+        <Globe className="w-4 h-4 text-blue-500" />
+        <span className="text-blue-500 text-sm font-medium">
+          Share Something
+        </span>
       </div>
 
-      {/* Divider */}
-      <div className="border-t border-neutral-200 dark:border-neutral-800 mt-3 pt-3 ml-12">
-        {/* Bottom toolbar */}
+      {/* Divider + Toolbar */}
+      <div className="border-t border-neutral-200 dark:border-neutral-800 mt-2 pt-2 ml-10">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <button className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-              <Image className="w-5 h-5 text-blue-500" />
-            </button>
-          </div>
+          <button className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+            <Image className="w-5 h-5 text-blue-500" />
+          </button>
+
           <button
-            className="px-5 py-2 bg-neutral-300 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-400 rounded-full font-semibold text-sm cursor-not-allowed"
+            className="px-4 py-1.5 bg-neutral-300 dark:bg-neutral-700 
+                   text-neutral-500 dark:text-neutral-400 rounded-full 
+                   font-medium text-sm cursor-not-allowed"
             disabled
           >
             Post
@@ -97,30 +109,30 @@ function UploadPostCompact({ onClick }) {
 
 // Full modal component (opens when compact is clicked)
 function UploadPostModal({ onClose, onSubmit }) {
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [user, setUser] = useState({ name: '', username: '', avatar: '' });
+  const [user, setUser] = useState({ name: "", username: "", avatar: "" });
   const fileInputRef = useRef(null);
 
   const MAX_IMAGES = 2;
   const MAX_CONTENT_LENGTH = 200;
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        const username = userData.username ? userData.username : 'username';
+        const username = userData.username ? userData.username : "username";
         const avatarImage = avatarMap[userData.avatar] || Avatar1;
 
         setUser({
-          name: userData.name || 'User',
+          name: userData.name || "User",
           username: username,
-          avatar: avatarImage
+          avatar: avatarImage,
         });
       } catch (error) {
-        console.error('Error parsing user data:', error);
+        console.error("Error parsing user data:", error);
       }
     }
   }, []);
@@ -140,7 +152,7 @@ function UploadPostModal({ onClose, onSubmit }) {
       reader.readAsDataURL(file);
     });
 
-    e.target.value = '';
+    e.target.value = "";
   };
 
   const removeImage = (index) => {
@@ -152,35 +164,38 @@ function UploadPostModal({ onClose, onSubmit }) {
 
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const photoUrls = images.map(img => img.preview);
+      const token = localStorage.getItem("token");
+      const photoUrls = images.map((img) => img.preview);
 
-      const response = await fetch('http://localhost:5000/api/user/post/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await fetch(
+        "http://localhost:5000/api/user/post/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: content.trim(),
+            photos: photoUrls,
+            isPublic: true,
+          }),
         },
-        body: JSON.stringify({
-          content: content.trim(),
-          photos: photoUrls,
-          isPublic: true
-        })
-      });
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        setContent('');
+        setContent("");
         setImages([]);
         if (onSubmit) onSubmit(data.post);
         if (onClose) onClose();
       } else {
-        alert(data.message || 'Failed to create post');
+        alert(data.message || "Failed to create post");
       }
     } catch (error) {
-      console.error('Error creating post:', error);
-      alert('Failed to create post');
+      console.error("Error creating post:", error);
+      alert("Failed to create post");
     } finally {
       setIsSubmitting(false);
     }
@@ -188,9 +203,9 @@ function UploadPostModal({ onClose, onSubmit }) {
 
   const getInitials = (name) => {
     return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
       .toUpperCase()
       .slice(0, 2);
   };
@@ -198,7 +213,6 @@ function UploadPostModal({ onClose, onSubmit }) {
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-neutral-900 w-full max-w-[600px] rounded-2xl max-h-[85vh] flex flex-col shadow-2xl">
-
         {/* Header with User Info */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
           {/* User Info */}
@@ -211,15 +225,15 @@ function UploadPostModal({ onClose, onSubmit }) {
               />
             ) : (
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-neutral-200 dark:ring-neutral-700">
-                {getInitials(user.name || 'U')}
+                {getInitials(user.name || "U")}
               </div>
             )}
             <div className="flex flex-col">
               <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">
-                {user.name || 'User'}
+                {user.name || "User"}
               </span>
               <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                @{user.username || 'username'}
+                @{user.username || "username"}
               </span>
             </div>
           </div>
@@ -281,10 +295,11 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={images.length >= MAX_IMAGES}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${images.length >= MAX_IMAGES
-              ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed'
-              : 'bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200'
-              }`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${
+              images.length >= MAX_IMAGES
+                ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
+                : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
+            }`}
           >
             <Image className="w-5 h-5" />
             <span className="text-sm">Image</span>
@@ -308,12 +323,13 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && images.length === 0)}
-            className={`px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${isSubmitting || (!content.trim() && images.length === 0)
-              ? 'bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed'
-              : 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg'
-              }`}
+            className={`px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${
+              isSubmitting || (!content.trim() && images.length === 0)
+                ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
+                : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
+            }`}
           >
-            {isSubmitting ? 'Posting...' : 'Post'}
+            {isSubmitting ? "Posting..." : "Post"}
           </button>
         </div>
       </div>

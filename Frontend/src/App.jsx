@@ -7,41 +7,45 @@ const App = () => {
   return (
     <div className='App'>
       <Routes>
-        {/* Protected route - redirects to /about if not logged in */}
+        {/* Protected Home */}
         <Route path='/' element={
           <ProtectedRoute>
             <Home />
           </ProtectedRoute>
         } />
 
-        {/* Login route - redirects to / if already logged in */}
+        {/* Login */}
         <Route path='/login' element={
           <PublicRoute>
             <Login />
           </PublicRoute>
         } />
 
-        {/* Signup route - redirects to / if already logged in */}
+        {/* Signup */}
         <Route path='/signup' element={
           <PublicRoute>
             <Signup />
           </PublicRoute>
         } />
 
-        {/* Legacy auth route - redirects to / if already logged in */}
+        {/* Old Auth Route */}
         <Route path='/auth' element={
           <PublicRoute>
             <Auth />
           </PublicRoute>
         } />
 
-        {/* About page - accessible to everyone, default landing for non-authenticated users */}
+        {/* Public About Route */}
         <Route path='/about' element={<About />} />
+        
+        <Route path='*' element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   );
 };
 
 export default App;
-
-
