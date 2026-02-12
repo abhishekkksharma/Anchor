@@ -59,7 +59,7 @@ const Sidebar = () => {
 
     return (
         <aside
-            className={`fixed top-20 left-60 pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col z-40 shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"
+            className={`fixed top-20 left-[0%] md:left-[5%] lg:left-[16%] pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col z-40 shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"
                 }`}
         >
             {/* User Profile Card - Expanded View */}

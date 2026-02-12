@@ -11,16 +11,15 @@ const Home = () => {
     const [hasMore, setHasMore] = useState(true);
     const loaderRef = useRef(null);
     const [initialLoad, setInitialLoad] = useState(true);
-    const fetchingRef = useRef(false); // Prevent duplicate fetches
+    const fetchingRef = useRef(false);
 
     const fetchPosts = async (pageNum) => {
-        // Prevent duplicate requests
         if (fetchingRef.current || loading) return;
         if (!hasMore && pageNum > 1) return;
 
         fetchingRef.current = true;
         setLoading(true);
-        
+
         try {
             const token = localStorage.getItem('token');
 
@@ -42,14 +41,12 @@ const Home = () => {
                         return newPosts;
                     }
 
-                    // Filter out duplicates
                     const existingIds = new Set(prev.map(p => p._id));
                     const uniqueNewPosts = newPosts.filter(p => !existingIds.has(p._id));
 
                     return [...prev, ...uniqueNewPosts];
                 });
 
-                // Check if we've reached the end
                 if (pageNum >= data.totalPages || newPosts.length === 0) {
                     setHasMore(false);
                 } else {
@@ -65,12 +62,10 @@ const Home = () => {
         }
     };
 
-    // Initial load only
     useEffect(() => {
         fetchPosts(1);
-    }, []); // Empty dependency array - only run once on mount
+    }, []);
 
-    // Infinite Scroll (Intersection Observer)
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -95,7 +90,7 @@ const Home = () => {
         return () => {
             if (currentLoader) observer.unobserve(currentLoader);
         };
-    }, [hasMore, loading]); // Removed page from dependencies
+    }, [hasMore, loading]);
 
     const handleNewPost = (newPost) => {
         setPosts(prev => [newPost, ...prev]);
@@ -105,11 +100,11 @@ const Home = () => {
         <div className='min-h-screen bg-neutral-50 dark:bg-black'>
             <Navbar />
 
-            <div className="hidden xl:block">
-                <Sidebar />
-            </div>
+            {/* Sidebar - now always rendered (handles its own responsive behavior) */}
+            <Sidebar />
 
-            <main className='min-h-screen pt-24 pb-20 xl:ml-[60px] flex justify-center px-4'>
+            {/* Main content - adjusted margins for sidebar */}
+            <main className='min-h-screen pt-22 pb-20 xl:ml-20 flex justify-center px-4'>
                 <div className='w-full max-w-xl flex flex-col gap-6'>
 
                     {/* Create Post */}
