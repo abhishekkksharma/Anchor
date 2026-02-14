@@ -5,7 +5,10 @@ const userRoutes = require("./routes/user");
 const adminRoutes = require('./routes/admin');
 
 // middlewares
-app.use(cors());
+app.use(cors({
+    origin: process.env.CLIENT_URL || "*",
+    credentials: true,
+}));
 app.use(express.json());
 
 // routes

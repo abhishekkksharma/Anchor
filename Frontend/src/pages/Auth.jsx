@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { API_URL } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { GridSmallBackground } from "../components/ui/grid-small-background";
 import Navbar from "../components/header/navbar";
 import { useAuth } from "../context/AuthContext";
 
 
-const API_BASE = "http://localhost:5000/user";
+const API_BASE = `${API_URL}/user`;
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);

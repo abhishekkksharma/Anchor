@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { API_URL } from '../../config/api';
 import { MoreHorizontal, Flag, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -22,7 +23,7 @@ function PostMoreOptions({ postId, authorId, onDelete }) {
 
     const handleReport = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/user/post/${postId}/report`, {
+            const res = await fetch(`${API_URL}/user/post/${postId}/report`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -44,7 +45,7 @@ function PostMoreOptions({ postId, authorId, onDelete }) {
     const handleDelete = async () => {
         if (!window.confirm('Are you sure you want to delete this post?')) return;
         try {
-            const res = await fetch(`http://localhost:5000/user/post/${postId}`, {
+            const res = await fetch(`${API_URL}/user/post/${postId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,

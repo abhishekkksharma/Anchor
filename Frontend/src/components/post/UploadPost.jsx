@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { API_URL } from "../../config/api";
 import { X, Image, Send, Globe, Loader2 } from "lucide-react";
 import {
   Avatar1,
@@ -185,7 +186,7 @@ function UploadPostModal({ onClose, onSubmit }) {
 
       // Create post with Cloudinary URLs
       const response = await fetch(
-        "http://localhost:5000/user/post/create",
+        `${API_URL}/user/post/create`,
         {
           method: "POST",
           headers: {
@@ -333,8 +334,8 @@ function UploadPostModal({ onClose, onSubmit }) {
             onClick={() => fileInputRef.current?.click()}
             disabled={images.length >= MAX_IMAGES || isSubmitting}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${images.length >= MAX_IMAGES || isSubmitting
-                ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
-                : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
+              ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
+              : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
               }`}
           >
             <Image className="w-5 h-5" />
@@ -360,8 +361,8 @@ function UploadPostModal({ onClose, onSubmit }) {
             onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && images.length === 0)}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${isSubmitting || (!content.trim() && images.length === 0)
-                ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
-                : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
+              ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
+              : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
               }`}
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}

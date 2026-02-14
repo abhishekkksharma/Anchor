@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_URL } from '../config/api';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/header/navbar';
 import UploadPost from '@/components/post/UploadPost';
@@ -24,7 +25,7 @@ const Home = () => {
             const token = localStorage.getItem('token');
 
             const response = await fetch(
-                `http://localhost:5000/user/post/allPosts?page=${pageNum}`,
+                `${API_URL}/user/post/allPosts?page=${pageNum}`,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`

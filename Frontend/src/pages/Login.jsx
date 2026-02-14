@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { API_URL } from "../config/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/header/navbar";
 import Logo2 from "../assets/logo2.png";
 import AuthPageHero from "@/components/AuthPages/AuthPageHero";
 
-const API_BASE = "http://localhost:5000/user";
+const API_BASE = `${API_URL}/user`;
 
 export default function Login() {
     const [form, setForm] = useState({
