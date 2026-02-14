@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars/index';
 import PostMoreOptions from './PostMoreOptions';
+import PostContent from './PostContent';
 
 // Map avatar names from database to actual imported images
 const avatarMap = {
@@ -127,13 +128,8 @@ function Post({ post }) {
             </div>
 
             {/* Content */}
-            {content && (
-                <div className="px-4 pb-3">
-                    <p className="text-neutral-800 dark:text-neutral-200 text-sm leading-relaxed">
-                        {content}
-                    </p>
-                </div>
-            )}
+            <PostContent content={post.content} />
+
 
             {/* Photos */}
             {photos.length > 0 && (

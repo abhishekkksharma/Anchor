@@ -114,7 +114,10 @@ function UploadPostModal({ onClose, onSubmit }) {
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
+  const [uploadProgress, setUploadProgress] = useState({
+    current: 0,
+    total: 0,
+  });
   const [user, setUser] = useState({ name: "", username: "", avatar: "" });
   const fileInputRef = useRef(null);
 
@@ -180,26 +183,23 @@ function UploadPostModal({ onClose, onSubmit }) {
           imageFiles,
           (current, total) => {
             setUploadProgress({ current, total });
-          }
+          },
         );
       }
 
       // Create post with Cloudinary URLs
-      const response = await fetch(
-        `${API_URL}/user/post/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            content: content.trim(),
-            photos: photoUrls,
-            isPublic: true,
-          }),
+      const response = await fetch(`${API_URL}/user/post/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          content: content.trim(),
+          photos: photoUrls,
+          isPublic: true,
+        }),
+      });
 
       const data = await response.json();
 
@@ -274,12 +274,11 @@ function UploadPostModal({ onClose, onSubmit }) {
           <textarea
             value={content}
             onChange={(e) => {
-              if (e.target.value.length <= MAX_CONTENT_LENGTH) {
-                setContent(e.target.value);
-              }
+              const value = e.target.value.slice(0, MAX_CONTENT_LENGTH);
+              setContent(value);
             }}
             placeholder="Start writing..."
-            className="w-full min-h-[150px] bg-transparent text-neutral-800 dark:text-neutral-100 text-lg placeholder:text-neutral-400 dark:placeholder:text-neutral-500 resize-none focus:outline-none leading-relaxed"
+            className="w-full min-h-[200px] bg-transparent text-neutral-800 dark:text-neutral-100 text-lg placeholder:text-neutral-400 dark:placeholder:text-neutral-500 resize-none focus:outline-none leading-relaxed"
             autoFocus
             disabled={isSubmitting}
           />
@@ -299,7 +298,8 @@ function UploadPostModal({ onClose, onSubmit }) {
                 </span>
               </div>
               <div className="text-xs text-blue-600 dark:text-blue-400">
-                {uploadProgress.current} of {uploadProgress.total} images uploaded
+                {uploadProgress.current} of {uploadProgress.total} images
+                uploaded
               </div>
             </div>
           )}
@@ -333,10 +333,11 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={images.length >= MAX_IMAGES || isSubmitting}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${images.length >= MAX_IMAGES || isSubmitting
-              ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
-              : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
-              }`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${
+              images.length >= MAX_IMAGES || isSubmitting
+                ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
+                : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
+            }`}
           >
             <Image className="w-5 h-5" />
             <span className="text-sm">Image</span>
@@ -360,10 +361,11 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && images.length === 0)}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${isSubmitting || (!content.trim() && images.length === 0)
-              ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
-              : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
-              }`}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${
+              isSubmitting || (!content.trim() && images.length === 0)
+                ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
+                : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
+            }`}
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSubmitting ? "Posting..." : "Post"}
