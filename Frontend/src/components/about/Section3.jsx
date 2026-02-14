@@ -46,7 +46,7 @@ function Section3() {
         alt="Phone"
       />
       <div className="flex dark:text-white items-center justify-center max-w-200 ">
-        <p className="text-center text-xl p-8 font-semibold -mt-8 opacity-80">
+        <p className="text-center text-xl lg:text-2xl p-8 font-semibold -mt-8 opacity-80">
           Discover what’s happening in tech — what’s new, what’s trending, and
           how the world is evolving every day. At Anchor, we believe technology
           isn’t something to hoard or gatekeep. It’s a tool meant to be shared,

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Image, Send, Globe } from "lucide-react";
+import { X, Image, Send, Globe, Loader2 } from "lucide-react";
 import {
   Avatar1,
   Avatar2,
@@ -7,6 +7,7 @@ import {
   Avatar4,
   Avatar5,
 } from "../../assets/Avatars";
+import { uploadMultipleImagesToCloudinary } from "../../utils/cloudinaryUpload";
 
 // Avatar mapping - keys match database values
 const avatarMap = {
@@ -112,11 +113,12 @@ function UploadPostModal({ onClose, onSubmit }) {
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState({ current: 0, total: 0 });
   const [user, setUser] = useState({ name: "", username: "", avatar: "" });
   const fileInputRef = useRef(null);
 
   const MAX_IMAGES = 2;
-  const MAX_CONTENT_LENGTH = 200;
+  const MAX_CONTENT_LENGTH = 800;
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -163,12 +165,27 @@ function UploadPostModal({ onClose, onSubmit }) {
     if (!content.trim() && images.length === 0) return;
 
     setIsSubmitting(true);
+    setUploadProgress({ current: 0, total: images.length });
+
     try {
       const token = localStorage.getItem("token");
-      const photoUrls = images.map((img) => img.preview);
+      let photoUrls = [];
 
+      // Upload images to Cloudinary if there are any
+      if (images.length > 0) {
+        const imageFiles = images.map((img) => img.file);
+
+        photoUrls = await uploadMultipleImagesToCloudinary(
+          imageFiles,
+          (current, total) => {
+            setUploadProgress({ current, total });
+          }
+        );
+      }
+
+      // Create post with Cloudinary URLs
       const response = await fetch(
-        "http://localhost:5000/api/user/post/create",
+        "http://localhost:5000/user/post/create",
         {
           method: "POST",
           headers: {
@@ -188,6 +205,7 @@ function UploadPostModal({ onClose, onSubmit }) {
       if (response.ok) {
         setContent("");
         setImages([]);
+        setUploadProgress({ current: 0, total: 0 });
         if (onSubmit) onSubmit(data.post);
         if (onClose) onClose();
       } else {
@@ -195,9 +213,10 @@ function UploadPostModal({ onClose, onSubmit }) {
       }
     } catch (error) {
       console.error("Error creating post:", error);
-      alert("Failed to create post");
+      alert(error.message || "Failed to create post");
     } finally {
       setIsSubmitting(false);
+      setUploadProgress({ current: 0, total: 0 });
     }
   };
 
@@ -241,7 +260,8 @@ function UploadPostModal({ onClose, onSubmit }) {
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            disabled={isSubmitting}
+            className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
           </button>
@@ -260,12 +280,28 @@ function UploadPostModal({ onClose, onSubmit }) {
             placeholder="Start writing..."
             className="w-full min-h-[150px] bg-transparent text-neutral-800 dark:text-neutral-100 text-lg placeholder:text-neutral-400 dark:placeholder:text-neutral-500 resize-none focus:outline-none leading-relaxed"
             autoFocus
+            disabled={isSubmitting}
           />
 
           {/* Character Count */}
           <div className="text-right text-sm text-neutral-400 dark:text-neutral-500 mb-4">
             {content.length}/{MAX_CONTENT_LENGTH}
           </div>
+
+          {/* Upload Progress Indicator */}
+          {isSubmitting && uploadProgress.total > 0 && (
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 mb-2">
+                <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
+                <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                  Uploading Your Post...
+                </span>
+              </div>
+              <div className="text-xs text-blue-600 dark:text-blue-400">
+                {uploadProgress.current} of {uploadProgress.total} images uploaded
+              </div>
+            </div>
+          )}
 
           {/* Image Previews */}
           {images.length > 0 && (
@@ -279,7 +315,8 @@ function UploadPostModal({ onClose, onSubmit }) {
                   />
                   <button
                     onClick={() => removeImage(index)}
-                    className="absolute -top-2 -right-2 p-1.5 bg-red-500 rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                    disabled={isSubmitting}
+                    className="absolute -top-2 -right-2 p-1.5 bg-red-500 rounded-full hover:bg-red-600 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <X className="w-3 h-3 text-white" />
                   </button>
@@ -294,12 +331,11 @@ function UploadPostModal({ onClose, onSubmit }) {
           {/* Image Upload Button */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            disabled={images.length >= MAX_IMAGES}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${
-              images.length >= MAX_IMAGES
+            disabled={images.length >= MAX_IMAGES || isSubmitting}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${images.length >= MAX_IMAGES || isSubmitting
                 ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
                 : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
-            }`}
+              }`}
           >
             <Image className="w-5 h-5" />
             <span className="text-sm">Image</span>
@@ -323,12 +359,12 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && images.length === 0)}
-            className={`px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${
-              isSubmitting || (!content.trim() && images.length === 0)
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${isSubmitting || (!content.trim() && images.length === 0)
                 ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
                 : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
-            }`}
+              }`}
           >
+            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSubmitting ? "Posting..." : "Post"}
           </button>
         </div>

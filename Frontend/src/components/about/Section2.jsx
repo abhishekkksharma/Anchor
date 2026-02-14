@@ -2,7 +2,7 @@ import Video from "../../assets/loader.mp4";
 
 function Section2() {
   return (
-    <div className="flex flex-col lg:flex-row justify-between items-center font-sans bg-white dark:bg-transparent py-16 lg:py-2 px-6 lg:px-20 gap-12">
+    <div className="flex flex-col lg:flex-row justify-between items-center font-sans bg-white  py-16 lg:py-2 px-6 lg:px-20 gap-12">
       {/* Left Side - Video */}
       <div className="w-1/2 lg:w-1/4 flex justify-center items-center">
         <video
@@ -11,7 +11,7 @@ function Section2() {
           muted
           playsInline
           loop
-          className="w-full dark:invert max-w-md lg:max-w-lg object-contain"
+          className="w-full  max-w-md lg:max-w-lg object-contain"
         />
       </div>
 
