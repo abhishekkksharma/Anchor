@@ -1,8 +1,9 @@
 const express = require('express');
-const {handleGetAllusers} = require('../controllers/admin/admin')
+const {handleGetAllusers,handleGetContactInfo} = require('../controllers/admin/admin')
 
 const router = express.Router();
 
 router.get('/allusers',handleGetAllusers);
+router.get('/contactFroms',handleGetContactInfo);
 
 module.exports = router;

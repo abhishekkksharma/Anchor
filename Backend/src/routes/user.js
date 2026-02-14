@@ -1,5 +1,5 @@
 const express = require('express');
-const { handleUserSignup,handleUserLogin,handleUserData } = require('../controllers/user/user');
+const { handleUserSignup,handleUserLogin,handleUserData,handleCreateContact } = require('../controllers/user/user');
 const { handleCreatePost,handleGetAllPosts } = require('../controllers/post/post');
 const  authMiddleware = require('../mildewares/authMiddleware');
 
@@ -11,5 +11,6 @@ router.post('/login',handleUserLogin);
 router.get('/userData',authMiddleware, handleUserData);
 router.post('/post/create',authMiddleware, handleCreatePost);
 router.get('/post/allPosts',authMiddleware, handleGetAllPosts);
+router.post('/contact/contactForm',handleCreateContact);
 
 module.exports = router;

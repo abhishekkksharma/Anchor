@@ -1,4 +1,5 @@
 const User = require("../../models/user");
+const Contact = require("../../models/contactFrom")
 const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -91,8 +92,35 @@ async function handleUserData(req, res) {
   return res.status(200).json({ userData });
 }
 
+async function handleCreateContact(req, res) {
+  try {
+    const { name, phoneNumber, email, message } = req.body;
+
+    const newContact = await Contact.create({
+      name,
+      phoneNumber,
+      email,
+      message,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Contact form submitted successfully",
+      data: newContact,
+    });
+  } catch (error) {
+    console.error("Error creating contact:", error);
+
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   handleUserSignup,
   handleUserLogin,
   handleUserData,
+  handleCreateContact
 };
