@@ -100,13 +100,11 @@ const Home = () => {
     return (
         <div className='min-h-screen bg-neutral-50 dark:bg-black'>
             <Navbar />
-
-            {/* Sidebar - now always rendered (handles its own responsive behavior) */}
             <Sidebar />
 
-            {/* Main content - adjusted margins for sidebar */}
-            <main className='min-h-screen pt-22 pb-20 xl:ml-20 flex justify-center px-4'>
-                <div className='w-full max-w-xl flex flex-col gap-6'>
+            {/* Main content — centered on screen */}
+            <main className='min-h-screen pt-20 pb-20 px-4'>
+                <div className='w-full max-w-xl mx-auto flex flex-col gap-6'>
 
                     {/* Create Post */}
                     <UploadPost onSubmit={handleNewPost} />
