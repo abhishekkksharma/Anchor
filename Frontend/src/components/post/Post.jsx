@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars/index';
+import PostMoreOptions from './PostMoreOptions';
 
 // Map avatar names from database to actual imported images
 const avatarMap = {
@@ -122,9 +123,7 @@ function Post({ post }) {
                 </div>
 
                 {/* More Options */}
-                <button className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                    <MoreHorizontal className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-                </button>
+                <PostMoreOptions postId={post._id} authorId={author?._id} />
             </div>
 
             {/* Content */}

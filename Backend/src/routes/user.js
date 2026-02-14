@@ -1,6 +1,6 @@
 const express = require('express');
 const { handleUserSignup,handleUserLogin,handleUserData,handleCreateContact } = require('../controllers/user/user');
-const { handleCreatePost,handleGetAllPosts } = require('../controllers/post/post');
+const { handleCreatePost,handleGetAllPosts,handleDeletePost } = require('../controllers/post/post');
 const  authMiddleware = require('../mildewares/authMiddleware');
 
 
@@ -12,5 +12,6 @@ router.get('/userData',authMiddleware, handleUserData);
 router.post('/post/create',authMiddleware, handleCreatePost);
 router.get('/post/allPosts',authMiddleware, handleGetAllPosts);
 router.post('/contact/contactForm',handleCreateContact);
+router.delete("/post/:id", handleDeletePost);
 
 module.exports = router;
