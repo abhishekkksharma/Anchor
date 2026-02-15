@@ -111,8 +111,45 @@ async function handleDeletePost(req, res) {
   }
 }
 
+async function handleLikePost(req, res) {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+        
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    let liked;
+
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter((uid) => uid.toString() !== userId.toString());
+      liked = false;
+    } else {
+      post.likes.push(userId);
+      liked = true;
+    }
+
+    await post.save();
+
+    return res.status(200).json({
+      message: liked ? "Post liked successfully" : "Post unliked successfully",
+      likesCount: post.likes.length, // ✅ return updated likes count
+      liked, // optional: tells frontend current state
+    });
+  } catch (error) {
+    console.error("Error liking post:", error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+
+
 module.exports = {
   handleCreatePost,
   handleGetAllPosts,
   handleDeletePost,
+  handleLikePost
 };

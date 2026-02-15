@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ContactBW from "../assets/ContactBW.png";
+import ContactColor from "../assets/ContactColor.png";
 import { API_URL } from "../config/api";
 
 function Contact() {
@@ -55,13 +56,25 @@ function Contact() {
         {/* Image Section */}
         <div
           className="md:w-1/2 w-full bg-gray-50 dark:bg-black dark:border dark:border-gray-900
-                flex items-center justify-center 
-                p-6 rounded-2xl overflow-hidden"
+             flex items-center justify-center 
+             p-6 rounded-2xl overflow-hidden group relative"
         >
+          {/* Default Image (NOT absolute) */}
           <img
             src={ContactBW}
-            alt="Contact"
-            className="w-full h-full object-cover"
+            alt="Contact Black and White"
+            className="w-full h-full object-cover
+               transition-opacity duration-500
+               group-hover:opacity-0"
+          />
+
+          {/* Hover Image */}
+          <img
+            src={ContactColor}
+            alt="Contact Colored"
+            className="w-full h-full object-cover absolute inset-0
+               opacity-0 group-hover:opacity-100
+               transition-opacity duration-500"
           />
         </div>
 
@@ -179,8 +192,8 @@ function Contact() {
                   status.includes("success")
                     ? "text-green-500"
                     : status.includes("Sending")
-                    ? "text-blue-500"
-                    : "text-red-500"
+                      ? "text-blue-500"
+                      : "text-red-500"
                 }`}
               >
                 {status}

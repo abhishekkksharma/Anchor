@@ -4,6 +4,7 @@ import Sidebar from '../components/Sidebar';
 import Navbar from '../components/header/navbar';
 import UploadPost from '@/components/post/UploadPost';
 import Post from '@/components/post/Post';
+import PostSkeleton from '@/components/post/PostSkeleton';
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
@@ -53,6 +54,8 @@ const Home = () => {
                 } else {
                     setHasMore(true);
                 }
+            } else if (response.status === 404) {
+                setHasMore(false);
             }
         } catch (error) {
             console.error('Error fetching posts:', error);
@@ -117,9 +120,7 @@ const Home = () => {
                     {/* Infinite scroll loader */}
                     <div ref={loaderRef} className="flex items-center justify-center w-full py-4">
                         {loading && (
-                            <div className="text-neutral-500 text-sm">
-                                Loading more posts...
-                            </div>
+                            <PostSkeleton />
                         )}
                     </div>
 

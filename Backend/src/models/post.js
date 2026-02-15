@@ -6,13 +6,13 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      maxlength: 800,   
+      maxlength: 800,
     },
 
     photos: [
       {
-        type: String,   
-      }
+        type: String,
+      },
     ],
 
     author: {
@@ -22,8 +22,9 @@ const postSchema = new mongoose.Schema(
     },
 
     likes: {
-      type: Number,
-      default: 0,
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
     },
 
     shares: {
@@ -35,7 +36,7 @@ const postSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Comment",
-      }
+      },
     ],
 
     isNewLetter: {
@@ -48,7 +49,7 @@ const postSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Post", postSchema);
