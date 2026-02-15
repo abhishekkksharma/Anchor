@@ -6,6 +6,7 @@ import Section2 from "@/components/about/Section2";
 import LogoMarquee from "@/components/about/Section3";
 import ContactForm from "@/components/ContactForm";
 import FAQSection from "@/components/Faqs";
+import Contact from "@/components/contact";
 
 const About = () => {
   return (
@@ -20,6 +21,7 @@ const About = () => {
           </div>
           <Section2/>
           <FAQSection/>
+          <Contact/>
           {/* <ContactForm/> */}
       </GridSmallBackground>
     </>
