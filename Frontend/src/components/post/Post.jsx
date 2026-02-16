@@ -19,7 +19,7 @@ const defaultAvatars = [Avatar1, Avatar2, Avatar3, Avatar4, Avatar5];
 function Post({ post }) {
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
-    const [likesCount, setLikesCount] = useState(post?.likes || 0);
+    const [likesCount, setLikesCount] = useState(post?.likes.length || 0);
     const [comment, setComment] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
