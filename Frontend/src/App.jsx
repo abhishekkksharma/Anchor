@@ -37,7 +37,7 @@ const App = () => {
 
         {/* Public About Route */}
         <Route path='/about' element={<About />} />
-        
+
         <Route path='*' element={
           <ProtectedRoute>
             <Home />

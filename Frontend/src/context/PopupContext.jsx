@@ -1,36 +1,42 @@
-import { createContext, useContext, useState } from "react";
-import Popup from "../components/Popup";
+import { createContext, useContext, useState, useCallback } from "react";
+import { AnimatePresence } from "framer-motion";
+import Popup from "@/components/Popup";
 
 const PopupContext = createContext();
 
 export const PopupProvider = ({ children }) => {
-  const [popup, setPopup] = useState({
-    message: "",
-    type: "info",
-    isOpen: false,
-  });
+  const [popups, setPopups] = useState([]);
 
-  const showPopup = (message, type = "info") => {
-    setPopup({ message, type, isOpen: true });
+  const showPopup = useCallback((message, type = "info") => {
+    const id = Date.now();
+
+    setPopups((prev) => [...prev, { id, message, type }]);
 
     setTimeout(() => {
-      setPopup(prev => ({ ...prev, isOpen: false }));
-    }, 3000);
-  };
+      removePopup(id);
+    }, 4000);
+  }, []);
 
-  const closePopup = () => {
-    setPopup(prev => ({ ...prev, isOpen: false }));
+  const removePopup = (id) => {
+    setPopups((prev) => prev.filter((popup) => popup.id !== id));
   };
 
   return (
     <PopupContext.Provider value={{ showPopup }}>
       {children}
-      <Popup
-        isOpen={popup.isOpen}
-        message={popup.message}
-        type={popup.type}
-        onClose={closePopup}
-      />
+
+      <div className="fixed top-5 right-5 z-50 flex flex-col gap-4">
+        <AnimatePresence>
+          {popups.map((popup) => (
+            <Popup
+              key={popup.id}
+              message={popup.message}
+              type={popup.type}
+              onClose={() => removePopup(popup.id)}
+            />
+          ))}
+        </AnimatePresence>
+      </div>
     </PopupContext.Provider>
   );
 };

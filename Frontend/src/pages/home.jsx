@@ -7,6 +7,7 @@ import Navbar from "../components/header/navbar";
 import UploadPost from "@/components/post/UploadPost";
 import Post from "@/components/post/Post";
 import PostSkeleton from "@/components/post/PostSkeleton";
+import { usePopup } from "@/context/PopupContext";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -18,6 +19,7 @@ const Home = () => {
   const fetchingRef = useRef(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
 
   const fetchPosts = async (pageNum) => {
@@ -64,11 +66,15 @@ const Home = () => {
       } else if (response.status === 404) {
         setHasMore(false);
       } else if (response.status === 401) {
-        alert("Token expired! please login again.")
-        logout();
-        navigate("/login", { replace: true });
+        setHasMore(false);
+        showPopup("Token expired! Please login again.", "error");
+        setTimeout(() => {
+          logout();
+          navigate("/login", { replace: true });
+        }, 1000);
         return;
       }
+
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
