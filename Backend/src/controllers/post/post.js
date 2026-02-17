@@ -135,8 +135,8 @@ async function handleLikePost(req, res) {
 
     return res.status(200).json({
       message: liked ? "Post liked successfully" : "Post unliked successfully",
-      likesCount: post.likes.length, // ✅ return updated likes count
-      liked, // optional: tells frontend current state
+      likesCount: post.likes.length,
+      liked,
     });
   } catch (error) {
     console.error("Error liking post:", error);

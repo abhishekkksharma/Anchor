@@ -3,6 +3,8 @@ import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal, ChevronLeft, Chev
 import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars/index';
 import PostMoreOptions from './PostMoreOptions';
 import PostContent from './PostContent';
+import { useAuth } from '../../context/AuthContext';
+import { API_URL } from '../../config/api';
 
 // Map avatar names from database to actual imported images
 const avatarMap = {
@@ -17,13 +19,28 @@ const avatarMap = {
 const defaultAvatars = [Avatar1, Avatar2, Avatar3, Avatar4, Avatar5];
 
 function Post({ post }) {
+    const { user, token } = useAuth();
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
-    const [likesCount, setLikesCount] = useState(post?.likes.length || 0);
+    const [likesCount, setLikesCount] = useState(post?.likes?.length || 0);
     const [comment, setComment] = useState('');
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
     const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
+
+    // Initialize liked state based on user and post.likes
+    useEffect(() => {
+        if (user && post?.likes) {
+            // Handle user ID if it has $oid structure
+            const userId = user._id?.$oid || user._id || user.id;
+            const hasLiked = post.likes.some(like => {
+                // Handle various like formats: string ID, object with _id, or object with $oid
+                const likeId = typeof like === 'string' ? like : (like._id || like.$oid);
+                return likeId === userId;
+            });
+            setLiked(hasLiked);
+        }
+    }, [user, post?.likes]);
 
     // Load current user avatar from localStorage
     useEffect(() => {
@@ -41,8 +58,12 @@ function Post({ post }) {
 
     // Format time ago
     const getTimeAgo = (dateString) => {
+        if (!dateString) return '';
+        // Handle $date object if present
+        const dateVal = typeof dateString === 'object' && dateString.$date ? dateString.$date : dateString;
+
         const now = new Date();
-        const date = new Date(dateString);
+        const date = new Date(dateVal);
         const diffInSeconds = Math.floor((now - date) / 1000);
 
         if (diffInSeconds < 60) return 'Just now';
@@ -63,9 +84,45 @@ function Post({ post }) {
             .slice(0, 2);
     };
 
-    const handleLike = () => {
+    const handleLike = async () => {
+        if (!user) {
+            // Optional: Prompt login
+            return;
+        }
+
+        // Optimistic update
+        const previousLiked = liked;
+        const previousCount = likesCount;
+
         setLiked(!liked);
         setLikesCount(prev => liked ? prev - 1 : prev + 1);
+
+        try {
+            // Determine post ID (handle $oid if necessary)
+            const postId = post._id?.$oid || post._id;
+
+            const response = await fetch(`${API_URL}/user/post/like/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to toggle like');
+            }
+
+            // Optional: Update state with actual data from backend if it returns the updated post
+            // const updatedPost = await response.json();
+            // setLikesCount(updatedPost.likes.length);
+
+        } catch (error) {
+            console.error('Error liking post:', error);
+            // Revert on error
+            setLiked(previousLiked);
+            setLikesCount(previousCount);
+        }
     };
 
     const handleComment = (e) => {
@@ -94,37 +151,44 @@ function Post({ post }) {
 
     const { content, photos = [], author, createdAt, comments = [], shares = 0 } = post;
 
+    // Handle author ID and name extraction safely
+    const authorName = author?.name || 'Unknown';
+    const authorUsername = author?.username || 'anonymous';
+    const authorAvatar = author?.avatar;
+    const authorId = author?._id?.$oid || author?._id;
+    const postId = post._id?.$oid || post._id;
+
     return (
         <div className="bg-white dark:bg-[#0c0e12] rounded-xl border-2 border-neutral-300 dark:border-neutral-700 overflow-hidden shadow-lg">
             {/* Header */}
             <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
                     {/* Author Avatar */}
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                        {author?.avatar ? (
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-500 to-zinc-800 flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                        {authorAvatar ? (
                             <img
-                                src={avatarMap[author.avatar] || author.avatar}
-                                alt={author?.name || 'User'}
+                                src={avatarMap[authorAvatar] || authorAvatar}
+                                alt={authorName}
                                 className="w-full h-full object-cover"
                             />
                         ) : (
-                            getInitials(author?.name)
+                            getInitials(authorName)
                         )}
                     </div>
 
                     {/* Author Info */}
                     <div className="flex flex-col">
                         <span className="font-semibold text-neutral-900 dark:text-neutral-100 text-sm">
-                            {author?.name || 'Unknown'}
+                            {authorName}
                         </span>
                         <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                            @{author?.username || 'user'} · {getTimeAgo(createdAt)}
+                            @{authorUsername} · {getTimeAgo(createdAt)}
                         </span>
                     </div>
                 </div>
 
                 {/* More Options */}
-                <PostMoreOptions postId={post._id} authorId={author?._id} />
+                <PostMoreOptions postId={postId} authorId={authorId} />
             </div>
 
             {/* Content */}

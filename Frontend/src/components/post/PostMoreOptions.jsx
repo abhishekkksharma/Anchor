@@ -8,7 +8,9 @@ function PostMoreOptions({ postId, authorId, onDelete }) {
     const menuRef = useRef(null);
     const { user, token } = useAuth();
 
-    const isOwner = user && (user.id === authorId || user._id === authorId);
+    // Handle potential $oid structure in user object
+    const currentUserId = user?._id?.$oid || user?._id || user?.id;
+    const isOwner = user && currentUserId === authorId;
 
     // Close menu when clicking outside
     useEffect(() => {
