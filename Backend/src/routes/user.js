@@ -1,6 +1,7 @@
 const express = require('express');
 const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact } = require('../controllers/user/user');
 const { handleCreatePost, handleGetAllPosts, handleDeletePost, handleLikePost } = require('../controllers/post/post');
+const {handleGetNearbyUsers,handleGetUserLocation, handleSetUserGeodata} = require("../controllers/connect/geoDataHandeler")
 const authMiddleware = require('../mildewares/authMiddleware');
 
 
@@ -16,6 +17,11 @@ router.post('/post/like/:id', authMiddleware, handleLikePost);
 router.delete('/post/:id', handleDeletePost);
 
 router.post('/contact/contactForm', handleCreateContact);
+
+
+router.get("/connect/nearby", authMiddleware, handleGetNearbyUsers);
+router.get("/userlocation",authMiddleware,handleGetUserLocation);
+router.post("/connect/usergeodata",authMiddleware,handleSetUserGeodata);
 
 
 module.exports = router;

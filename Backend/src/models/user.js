@@ -61,12 +61,37 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
 
+    location: {
+      city: {
+        type: String,
+        trim: true,
+      },
+      state: {
+        type: String,
+        trim: true,
+      },
+      county: {
+        type: String,
+        trim: true,
+      },
+      placeName: {
+        type: String,
+        trim: true,
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: undefined,
+      },
+    },
+
     lastLogin: {
       type: Date,
     }
   },
   { timestamps: true }
 );
+
+userSchema.index({ "location.coordinates": "2dsphere" });
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
