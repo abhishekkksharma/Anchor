@@ -3,7 +3,8 @@ import Home from "./home";
 import Auth from "./Auth";
 import Login from "./Login";
 import Signup from "./Signup";
+import Connect from "./connect";
 
 
-export { About, Home, Auth, Login, Signup };
+export { About, Home, Auth, Login, Signup, Connect };
 
