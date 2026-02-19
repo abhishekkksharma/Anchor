@@ -90,7 +90,7 @@ async function handleSetUserGeodata(req, res) {
           .json({ message: "coordinates must be [longitude, latitude]" });
       }
 
-      const [longitude, latitude] = rawCoordinates.map(Number);
+      const [latitude,longitude] = rawCoordinates.map(Number);
 
       if (
         Number.isNaN(longitude) ||
