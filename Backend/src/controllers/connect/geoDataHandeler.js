@@ -36,7 +36,7 @@ async function handleGetNearbyUsers(req, res) {
   }
 }
 
-async function handleGetUserLocation(req,res) {
+async function handleGetUserLocation(req, res) {
   try {
     const userId = req.user?.id;
 
@@ -90,7 +90,7 @@ async function handleSetUserGeodata(req, res) {
           .json({ message: "coordinates must be [longitude, latitude]" });
       }
 
-      const [latitude,longitude] = rawCoordinates.map(Number);
+      const [longitude, latitude] = rawCoordinates.map(Number);
 
       if (
         Number.isNaN(longitude) ||
@@ -135,8 +135,8 @@ async function handleSetUserGeodata(req, res) {
 
 
 
-module.exports={
-    handleGetNearbyUsers,
-    handleGetUserLocation,
-    handleSetUserGeodata,
+module.exports = {
+  handleGetNearbyUsers,
+  handleGetUserLocation,
+  handleSetUserGeodata,
 }
