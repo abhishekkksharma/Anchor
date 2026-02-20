@@ -11,12 +11,10 @@ async function handleGetNearbyUsers(req, res) {
     const longitude = Number(lng);
     const km = Number(rangeKm);
 
-    if (
-      Number.isNaN(latitude) ||
-      Number.isNaN(longitude) ||
-      Number.isNaN(km)
-    ) {
-      return res.status(400).json({ message: "lat, lng, rangeKm must be numbers" });
+    if (Number.isNaN(latitude) || Number.isNaN(longitude) || Number.isNaN(km)) {
+      return res
+        .status(400)
+        .json({ message: "lat, lng, rangeKm must be numbers" });
     }
 
     const radiusInRadians = km / 6378.1; // Earth radius in km
@@ -65,7 +63,13 @@ async function handleSetUserGeodata(req, res) {
     const userId = req.user?.id;
     const input = req.body?.location ?? req.body ?? {};
 
-    const { city, state, county, placeName, coordinates: rawCoordinates } = input;
+    const {
+      city,
+      state,
+      county,
+      placeName,
+      coordinates: rawCoordinates,
+    } = input;
 
     const setPayload = {};
 
@@ -75,16 +79,15 @@ async function handleSetUserGeodata(req, res) {
 
     if (trimIfString(city)) setPayload["location.city"] = trimIfString(city);
     if (trimIfString(state)) setPayload["location.state"] = trimIfString(state);
-    if (trimIfString(county)) setPayload["location.county"] = trimIfString(county);
+    if (trimIfString(county))
+      setPayload["location.county"] = trimIfString(county);
     if (trimIfString(placeName))
       setPayload["location.placeName"] = trimIfString(placeName);
 
     // Coordinates validation
+    // Coordinates validation
     if (rawCoordinates !== undefined) {
-      if (
-        !Array.isArray(rawCoordinates) ||
-        rawCoordinates.length !== 2
-      ) {
+      if (!Array.isArray(rawCoordinates) || rawCoordinates.length !== 2) {
         return res
           .status(400)
           .json({ message: "coordinates must be [longitude, latitude]" });
@@ -95,8 +98,10 @@ async function handleSetUserGeodata(req, res) {
       if (
         Number.isNaN(longitude) ||
         Number.isNaN(latitude) ||
-        longitude < -180 || longitude > 180 ||
-        latitude < -90 || latitude > 90
+        longitude < -180 ||
+        longitude > 180 ||
+        latitude < -90 ||
+        latitude > 90
       ) {
         return res.status(400).json({
           message:
@@ -104,7 +109,8 @@ async function handleSetUserGeodata(req, res) {
         });
       }
 
-      setPayload["location.coordinates"] = [longitude, latitude];
+      // ❗ Store in lat/long order
+      setPayload["location.coordinates"] = [latitude, longitude];
     }
 
     if (!Object.keys(setPayload).length) {
@@ -117,7 +123,7 @@ async function handleSetUserGeodata(req, res) {
     const user = await User.findByIdAndUpdate(
       userId,
       { $set: setPayload },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).select("_id location");
 
     if (!user) {
@@ -133,10 +139,8 @@ async function handleSetUserGeodata(req, res) {
   }
 }
 
-
-
 module.exports = {
   handleGetNearbyUsers,
   handleGetUserLocation,
   handleSetUserGeodata,
-}
+};

@@ -79,7 +79,7 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
       coordinates: {
-        type: [Number], // [longitude, latitude]
+        type: [Number], // [lat, long]
         default: undefined,
       },
     },
