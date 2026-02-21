@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { resolveAvatar } from "@/utils/avatarHelper";
 import { useAuth } from "@/context/AuthContext";
 import { Link, Pen, X } from "lucide-react";
+import EditProfileModal from "./EditProfileModal";
 
 function ProfileTop() {
   const { user } = useAuth();
   const userAvatar = resolveAvatar(user?.avatar);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
     <>
@@ -32,11 +34,15 @@ function ProfileTop() {
 
             {/* Top Right Actions (Link & More) */}
             <div className="flex gap-4 text-gray-400 dark:text-gray-500 mb-2 sm:mb-4">
-              <button className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+              <button className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors hidden">
                 <Link className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-              <button className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                <Pen className="w-4 h-4 sm:w-6 sm:h-6" />
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
+              >
+                <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-sm font-medium hidden sm:inline">Edit Profile</span>
               </button>
             </div>
           </div>
@@ -51,17 +57,16 @@ function ProfileTop() {
             </p>
           </div>
 
-          {/* Dotted Divider */}
-          <hr className="my-6 sm:my-8 border-t-2 border-dotted border-gray-200 dark:border-gray-700 transition-colors duration-200" />
-
+          {/* line break */}
+          <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />
           {/* About Section */}
           <div>
             <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 transition-colors duration-200">
               About
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base transition-colors duration-200">
-              {user?.bio ||
-                "I'm an independent designer based in Seoul. I partner with brands and startups through Studio Else to create bold, minimal interfaces and meaningful digital experiences."}
+            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base transition-colors duration-200 whitespace-pre-wrap">
+              {user?.about ||
+                "Start telling about you....."}
             </p>
           </div>
         </div>
@@ -86,7 +91,7 @@ function ProfileTop() {
             >
               <X className="w-8 h-8" />
             </button>
-            
+
             {/* Enlarged Avatar */}
             <img
               src={userAvatar}
@@ -96,6 +101,12 @@ function ProfileTop() {
           </div>
         </div>
       )}
+
+      {/* Edit Profile Modal */}
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
     </>
   );
 }
