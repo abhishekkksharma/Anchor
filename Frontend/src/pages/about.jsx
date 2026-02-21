@@ -12,7 +12,6 @@ const About = () => {
   return (
     <>
       <GridSmallBackground>
-        <Navbar />
         <div className="flex justify-center items-center mt-50">
           <Hero/>
         </div>

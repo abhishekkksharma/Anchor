@@ -3,7 +3,6 @@ import { API_URL } from "../config/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/header/navbar";
 import UploadPost from "@/components/post/UploadPost";
 import Post from "@/components/post/Post";
 import PostSkeleton from "@/components/post/PostSkeleton";
@@ -125,7 +124,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-black">
-      <Navbar />
       <Sidebar />
 
       {/* Main content — centered on screen */}

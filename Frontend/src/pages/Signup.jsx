@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { API_URL } from "../config/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/header/navbar";
 import Logo2 from "../assets/logo2.png";
+import useAvatarUpload from "../hooks/useAvatarUpload";
 
 // Import avatars
 import {
@@ -37,8 +37,13 @@ export default function Signup() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [customAvatarFile, setCustomAvatarFile] = useState(null);
+  const [customAvatarPreview, setCustomAvatarPreview] = useState(null);
+
   const { login } = useAuth();
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const { uploadAvatar } = useAvatarUpload();
 
   const validateForm = () => {
     const newErrors = {};
@@ -90,6 +95,17 @@ export default function Signup() {
 
   const handleAvatarSelect = (avatarName) => {
     setForm((prev) => ({ ...prev, avatar: avatarName }));
+    setCustomAvatarFile(null);
+    setCustomAvatarPreview(null);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCustomAvatarFile(file);
+      setCustomAvatarPreview(URL.createObjectURL(file));
+      setForm((prev) => ({ ...prev, avatar: "custom" }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -101,6 +117,12 @@ export default function Signup() {
     setMessage("");
 
     try {
+      let finalAvatar = form.avatar;
+
+      if (form.avatar === "custom" && customAvatarFile) {
+        finalAvatar = await uploadAvatar(customAvatarFile);
+      }
+
       const res = await fetch(`${API_BASE}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -109,7 +131,7 @@ export default function Signup() {
           username: form.username,
           email: form.email,
           password: form.password,
-          avatar: form.avatar,
+          avatar: finalAvatar,
         }),
       });
 
@@ -123,7 +145,7 @@ export default function Signup() {
         email: form.email,
         name: form.name,
         username: form.username,
-        avatar: form.avatar,
+        avatar: finalAvatar,
       }, data.token);
       navigate("/");
     } catch (err) {
@@ -133,11 +155,12 @@ export default function Signup() {
     }
   };
 
-  const selectedAvatarSrc = avatars.find((a) => a.name === form.avatar)?.src;
+  const selectedAvatarSrc = form.avatar === "custom"
+    ? customAvatarPreview
+    : avatars.find((a) => a.name === form.avatar)?.src;
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen lg:pt-0 pt-20 flex bg-white dark:bg-zinc-950">
         {/* Left Panel - Decorative */}
         <AuthPageHero />
@@ -222,6 +245,24 @@ export default function Signup() {
                         />
                       </button>
                     ))}
+                    <div className="flex items-center justify-center">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`w-12 h-12 flex items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-full transition-all duration-200 hover:bg-gray-200 dark:hover:bg-zinc-700 ${form.avatar === "custom" ? "ring-2 ring-blue-500 scale-110" : "opacity-60 hover:opacity-100"}`}
+                      >
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

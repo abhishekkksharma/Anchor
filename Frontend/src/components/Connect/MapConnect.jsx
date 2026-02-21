@@ -7,9 +7,9 @@ import {
   MarkerTooltip,
   MapControls,
 } from "@/components/ui/map";
-import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars/index';
-import { API_URL } from "../../config/api";
 import { MapPin } from "lucide-react";
+import { resolveAvatar } from "../../utils/avatarHelper";
+import { API_URL } from "../../config/api";
 
 const theme = localStorage.getItem("theme");
 
@@ -55,9 +55,15 @@ function MapConnect({ userCoordinates }) {
       <Map center={[userCoordinates[1], userCoordinates[0]]} zoom={9}>
         {nearbyUsers.map((user, index) => {
           // Check if user has the default mongoose avatar or no avatar
-          const isDefaultAvatar = !user.avatar || user.avatar.includes("ui-avatars.com");
-          const localAvatars = [Avatar1, Avatar2, Avatar3, Avatar4, Avatar5];
-          const assignedAvatar = isDefaultAvatar ? localAvatars[index % localAvatars.length] : user.avatar;
+          const isDefaultUiAvatar = user.avatar && user.avatar.includes("ui-avatars.com");
+
+          let assignedAvatar;
+          if (isDefaultUiAvatar) {
+            // Fallback to local import dynamically if needed, or stick to ui-avatars.
+            assignedAvatar = user.avatar;
+          } else {
+            assignedAvatar = resolveAvatar(user.avatar);
+          }
 
           return (
             <MapMarker
@@ -78,7 +84,7 @@ function MapConnect({ userCoordinates }) {
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         // Safe fallback if local image fails
-                        e.target.src = localAvatars[index % localAvatars.length];
+                        e.target.src = resolveAvatar(`Avatar${(index % 5) + 1}`);
                       }}
                     />
                   </div>
@@ -94,7 +100,7 @@ function MapConnect({ userCoordinates }) {
                       src={assignedAvatar}
                       alt={user.name || "User"}
                       className="size-12 rounded-full border shadow-sm object-cover"
-                      onError={(e) => { e.target.src = localAvatars[index % localAvatars.length]; }}
+                      onError={(e) => { e.target.src = resolveAvatar(`Avatar${(index % 5) + 1}`); }}
                     />
                     <div className="text-center">
                       <p className="font-semibold text-sm leading-tight text-neutral-900 dark:text-neutral-100">{user.name}</p>

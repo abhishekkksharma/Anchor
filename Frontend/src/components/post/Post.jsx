@@ -1,22 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Avatar1, Avatar2, Avatar3, Avatar4, Avatar5 } from '../../assets/Avatars/index';
 import PostMoreOptions from './PostMoreOptions';
 import PostContent from './PostContent';
 import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../config/api';
-
-// Map avatar names from database to actual imported images
-const avatarMap = {
-    'Avatar1': Avatar1,
-    'Avatar2': Avatar2,
-    'Avatar3': Avatar3,
-    'Avatar4': Avatar4,
-    'Avatar5': Avatar5,
-};
-
-// Array of default avatars
-const defaultAvatars = [Avatar1, Avatar2, Avatar3, Avatar4, Avatar5];
+import { resolveAvatar } from '../../utils/avatarHelper';
 
 function Post({ post }) {
     const { user, token } = useAuth();
@@ -48,7 +36,7 @@ function Post({ post }) {
         if (storedUser) {
             try {
                 const userData = JSON.parse(storedUser);
-                const avatar = avatarMap[userData.avatar] || null;
+                const avatar = resolveAvatar(userData.avatar);
                 setCurrentUserAvatar(avatar);
             } catch (error) {
                 console.error('Error parsing user data:', error);
@@ -167,7 +155,7 @@ function Post({ post }) {
                     <div className="w-11 h-11 rounded-full bg-gradient-to-br from-zinc-500 to-zinc-800 flex items-center justify-center text-white font-bold text-sm overflow-hidden">
                         {authorAvatar ? (
                             <img
-                                src={avatarMap[authorAvatar] || authorAvatar}
+                                src={resolveAvatar(authorAvatar) || authorAvatar}
                                 alt={authorName}
                                 className="w-full h-full object-cover"
                             />

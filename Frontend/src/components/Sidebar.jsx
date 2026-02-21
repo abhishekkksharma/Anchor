@@ -13,20 +13,7 @@ import {
     ArrowBigLeft
 } from "lucide-react";
 
-// Import avatars
-import Avatar1 from "../assets/Avatars/Avatar1.png";
-import Avatar2 from "../assets/Avatars/Avatar2.png";
-import Avatar3 from "../assets/Avatars/Avatar3.png";
-import Avatar4 from "../assets/Avatars/Avatar4.png";
-import Avatar5 from "../assets/Avatars/Avatar5.png";
-
-const avatarMap = {
-    Avatar1,
-    Avatar2,
-    Avatar3,
-    Avatar4,
-    Avatar5,
-};
+import { resolveAvatar } from '../utils/avatarHelper';
 
 const MD_BREAKPOINT = 768;
 
@@ -37,7 +24,7 @@ const Sidebar = () => {
     // Get username and avatar from auth context
     const username = user?.username || user?.name || 'Guest User';
     const userInitial = username.charAt(0).toUpperCase();
-    const userAvatar = user?.avatar ? avatarMap[user.avatar] : null;
+    const userAvatar = resolveAvatar(user?.avatar);
 
     // Track whether we're on a mobile screen
     const [isMobile, setIsMobile] = useState(() => window.innerWidth < MD_BREAKPOINT);

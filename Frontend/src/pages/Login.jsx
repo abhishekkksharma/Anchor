@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { API_URL } from "../config/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/header/navbar";
 import Logo2 from "../assets/logo2.png";
 import AuthPageHero from "@/components/AuthPages/AuthPageHero";
 
@@ -78,7 +77,6 @@ export default function Login() {
 
     return (
         <>
-            <Navbar />
             <div className="min-h-screen flex bg-white dark:bg-zinc-950">
                 {/* Left Panel - Decorative */}
                 <AuthPageHero />

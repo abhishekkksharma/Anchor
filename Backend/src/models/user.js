@@ -37,6 +37,11 @@ const userSchema = new mongoose.Schema(
       default: "https://ui-avatars.com/api/?background=random&name=User",    // Default avatar
     },
 
+    about:{
+      type:String,
+      default:"",
+    },
+
     posts: [
       {
         type: mongoose.Schema.Types.ObjectId,

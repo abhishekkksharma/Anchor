@@ -1,23 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { API_URL } from "../../config/api";
 import { X, Image, Send, Globe, Loader2 } from "lucide-react";
-import {
-  Avatar1,
-  Avatar2,
-  Avatar3,
-  Avatar4,
-  Avatar5,
-} from "../../assets/Avatars";
 import { uploadMultipleImagesToCloudinary } from "../../utils/cloudinaryUpload";
-
-// Avatar mapping - keys match database values
-const avatarMap = {
-  Avatar1: Avatar1,
-  Avatar2: Avatar2,
-  Avatar3: Avatar3,
-  Avatar4: Avatar4,
-  Avatar5: Avatar5,
-};
+import { resolveAvatar } from "../../utils/avatarHelper";
+import { Avatar1 } from "../../assets/Avatars";
 
 // Compact inline component (what user sees on the page)
 function UploadPostCompact({ onClick }) {
@@ -28,7 +14,7 @@ function UploadPostCompact({ onClick }) {
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
-        const avatarImage = avatarMap[userData.avatar] || Avatar1;
+        const avatarImage = resolveAvatar(userData.avatar) || Avatar1;
         setUser({
           name: userData.name || "User",
           username: userData.username || "username",
@@ -130,7 +116,7 @@ function UploadPostModal({ onClose, onSubmit }) {
       try {
         const userData = JSON.parse(storedUser);
         const username = userData.username ? userData.username : "username";
-        const avatarImage = avatarMap[userData.avatar] || Avatar1;
+        const avatarImage = resolveAvatar(userData.avatar) || Avatar1;
 
         setUser({
           name: userData.name || "User",
@@ -333,11 +319,10 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={images.length >= MAX_IMAGES || isSubmitting}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${
-              images.length >= MAX_IMAGES || isSubmitting
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all font-medium ${images.length >= MAX_IMAGES || isSubmitting
                 ? "bg-neutral-200 dark:bg-neutral-700 text-neutral-400 cursor-not-allowed"
                 : "bg-neutral-200 dark:bg-neutral-700 hover:bg-neutral-300 dark:hover:bg-neutral-600 text-neutral-700 dark:text-neutral-200"
-            }`}
+              }`}
           >
             <Image className="w-5 h-5" />
             <span className="text-sm">Image</span>
@@ -361,11 +346,10 @@ function UploadPostModal({ onClose, onSubmit }) {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || (!content.trim() && images.length === 0)}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${
-              isSubmitting || (!content.trim() && images.length === 0)
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition-all font-semibold text-sm ${isSubmitting || (!content.trim() && images.length === 0)
                 ? "bg-neutral-300 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed"
                 : "bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-black dark:hover:bg-neutral-100 shadow-lg"
-            }`}
+              }`}
           >
             {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
             {isSubmitting ? "Posting..." : "Post"}

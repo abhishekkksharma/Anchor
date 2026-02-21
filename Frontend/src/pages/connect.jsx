@@ -53,7 +53,6 @@ function connect() {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-black">
-      <Navbar />
       <Sidebar />
 
       <main className="min-h-screen pt-20 pb-20 px-4">

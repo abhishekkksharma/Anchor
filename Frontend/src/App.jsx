@@ -1,11 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Home, About, Auth, Login, Signup, Connect } from './pages';
+import { Home, About, Auth, Login, Signup, Connect, Profile } from './pages';
 import ProtectedRoute, { PublicRoute } from './components/ProtectedRoute';
+import Navbar from './components/header/navbar';
 
 const App = () => {
   return (
     <div className='App'>
+      <Navbar/>
       <Routes>
         {/* Protected Home */}
         <Route path='/' element={
@@ -39,6 +41,12 @@ const App = () => {
         <Route path='/connect' element={
           <ProtectedRoute>
             <Connect />
+          </ProtectedRoute>
+        } />
+
+        <Route path='/profile' element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         } />
 

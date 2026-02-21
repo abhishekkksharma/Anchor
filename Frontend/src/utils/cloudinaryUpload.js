@@ -5,8 +5,8 @@
 
 // Cloudinary configuration
 const CLOUDINARY_CONFIG = {
-    cloudName : import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
-    uploadPreset : import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
 };
 
 /**
@@ -14,12 +14,12 @@ const CLOUDINARY_CONFIG = {
  * @param {File} file - The image file to upload
  * @returns {Promise<string>} - The secure URL of the uploaded image
  */
-export const uploadImageToCloudinary = async (file) => {
+export const uploadImageToCloudinary = async (file, folderName = 'social_media_posts') => {
   try {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
-    formData.append('folder', 'social_media_posts'); // Optional: organize uploads in folders
+    formData.append('folder', folderName); // Optional: organize uploads in folders
 
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,

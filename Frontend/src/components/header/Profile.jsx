@@ -2,20 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-// Import avatars
-import Avatar1 from "../../assets/Avatars/Avatar1.png";
-import Avatar2 from "../../assets/Avatars/Avatar2.png";
-import Avatar3 from "../../assets/Avatars/Avatar3.png";
-import Avatar4 from "../../assets/Avatars/Avatar4.png";
-import Avatar5 from "../../assets/Avatars/Avatar5.png";
-
-const avatarMap = {
-  Avatar1,
-  Avatar2,
-  Avatar3,
-  Avatar4,
-  Avatar5,
-};
+import { resolveAvatar } from '../../utils/avatarHelper';
 
 // Profile Button Component with Dropdown
 const ProfileButton = () => {
@@ -56,8 +43,8 @@ const ProfileButton = () => {
     return 'U';
   };
 
-  // Get avatar image from avatar name
-  const userAvatar = user?.avatar ? avatarMap[user.avatar] : null;
+  // Get avatar image from avatar name or URL
+  const userAvatar = resolveAvatar(user?.avatar);
 
   return (
     <div className="relative" ref={dropdownRef}>

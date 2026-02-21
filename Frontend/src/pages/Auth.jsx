@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { API_URL } from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { GridSmallBackground } from "../components/ui/grid-small-background";
-import Navbar from "../components/header/navbar";
 import { useAuth } from "../context/AuthContext";
 
 
@@ -50,7 +49,6 @@ export default function Auth() {
 
   return (
     <GridSmallBackground>
-      <Navbar />
       <div className="w-full max-w-sm mx-auto p-6 bg-white dark:bg-zinc-900 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700">
         <h2 className="text-2xl font-bold text-center mb-4 text-black dark:text-white">
           {isLogin ? "Login" : "Signup"}
