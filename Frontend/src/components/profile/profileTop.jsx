@@ -1,14 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { resolveAvatar } from "@/utils/avatarHelper";
 import { useAuth } from "@/context/AuthContext";
 import { Link, Pen, X } from "lucide-react";
 import EditProfileModal from "./EditProfileModal";
+import { API_URL } from "@/config/api";
 
-function ProfileTop() {
+function ProfileTop({ username }) {
   const { user } = useAuth();
-  const userAvatar = resolveAvatar(user?.avatar);
+  const [profileUser, setProfileUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_URL}/user/profile?username=${username}`);
+        if (!res.ok) {
+          throw new Error("Profile not found");
+        }
+        const data = await res.json();
+        setProfileUser(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchProfile();
+    }
+  }, [username]);
+
+  const isOwnProfile = user?.username === username;
+  const displayUser = isOwnProfile ? user : profileUser;
+  const userAvatar = resolveAvatar(displayUser?.avatar);
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl w-full mx-auto p-10 flex justify-center items-center h-48">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error || !displayUser) {
+    return (
+      <div className="max-w-3xl w-full mx-auto p-10 text-center text-gray-500 dark:text-gray-400">
+        <p className="text-xl font-semibold mb-2">User not found</p>
+        <p>The profile you are looking for doesn't exist.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -28,7 +75,7 @@ function ProfileTop() {
                 onClick={() => setIsImageModalOpen(true)}
                 className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-full border-4 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-800 transition-colors duration-200 cursor-pointer active:scale-95"
                 src={userAvatar}
-                alt={user?.name || "Avatar"}
+                alt={displayUser?.name || "Avatar"}
               />
             </div>
 
@@ -37,23 +84,25 @@ function ProfileTop() {
               <button className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors hidden">
                 <Link className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
-              >
-                <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-sm font-medium hidden sm:inline">Edit Profile</span>
-              </button>
+              {isOwnProfile && (
+                <button
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
+                >
+                  <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-sm font-medium hidden sm:inline">Edit Profile</span>
+                </button>
+              )}
             </div>
           </div>
 
           {/* Name and Title */}
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
-              {user?.name || "User Name"}
+              {displayUser?.name || "User Name"}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mt-1 transition-colors duration-200">
-              @{user?.username || "username"}
+              @{displayUser?.username || "username"}
             </p>
           </div>
 
@@ -65,8 +114,8 @@ function ProfileTop() {
               About
             </h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base transition-colors duration-200 whitespace-pre-wrap">
-              {user?.about ||
-                "Start telling about you....."}
+              {displayUser?.about ||
+                "....."}
             </p>
           </div>
         </div>
@@ -95,7 +144,7 @@ function ProfileTop() {
             {/* Enlarged Avatar */}
             <img
               src={userAvatar}
-              alt={user?.name || "Full size avatar"}
+              alt={displayUser?.name || "Full size avatar"}
               className="object-contain max-w-full max-h-[85vh] rounded-xl shadow-2xl"
             />
           </div>

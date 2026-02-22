@@ -7,7 +7,7 @@ import Navbar from './components/header/navbar';
 const App = () => {
   return (
     <div className='App'>
-      <Navbar/>
+      <Navbar />
       <Routes>
         {/* Protected Home */}
         <Route path='/' element={
@@ -44,11 +44,8 @@ const App = () => {
           </ProtectedRoute>
         } />
 
-        <Route path='/profile' element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        } />
+        {/* Public Profile page */}
+        <Route path='/profile/:username' element={<Profile />} />
 
         {/* Public About Route */}
         <Route path='/about' element={<About />} />

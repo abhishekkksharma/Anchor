@@ -189,10 +189,37 @@ async function handleUpdateUserData(req, res) {
   }
 }
 
+async function handleGetProfileByUsername(req, res) {
+  const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,30}$/;
+  try {
+    const normalized = String(req.query.username || "").trim().toLowerCase();
+
+    if (!USERNAME_REGEX.test(normalized)) {
+      return res.status(400).json({ error: "Invalid username" });
+    }
+
+    const user = await User.findOne(
+      { username: normalized },
+      "name username about avatar"
+    ).lean();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+
 module.exports = {
   handleUserSignup,
   handleUserLogin,
   handleUserData,
   handleCreateContact,
   handleUpdateUserData,
+  handleGetProfileByUsername
 };
