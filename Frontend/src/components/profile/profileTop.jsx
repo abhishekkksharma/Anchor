@@ -60,64 +60,60 @@ function ProfileTop({ username }) {
   return (
     <>
       <div className="max-w-3xl w-full mx-auto bg-white dark:bg-black rounded-md shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden transition-colors duration-200">
-        {/* Banner Area */}
-        <div className="h-32 bg-gray-200 sm:h-48 w-full relative flex items-center justify-center">
-          {/* Optional: Add a pattern or image inside the banner here if needed */}
-        </div>
+        {/* Banner */}
+        <div className="h-28 bg-gray-200 sm:h-40 w-full" />
 
-        {/* Profile Info Section */}
-        <div className="relative px-6 sm:px-8 pb-8">
-          {/* Avatar and Top Actions Row */}
-          <div className="flex justify-between items-end -mt-12 sm:-mt-16 mb-4">
+        {/* Profile Info */}
+        <div className="relative px-6 sm:px-8 pb-6">
+          {/* Avatar + Edit Row */}
+          <div className="flex justify-between items-end -mt-12 sm:-mt-16 mb-3">
             <div className="relative inline-block">
-              {/* Avatar */}
               <img
                 onClick={() => setIsImageModalOpen(true)}
-                className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-full border-4 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-800 transition-colors duration-200 cursor-pointer active:scale-95"
+                className="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-full border-4 border-white dark:border-gray-900 bg-gray-200 dark:bg-gray-800 cursor-pointer active:scale-95"
                 src={userAvatar}
                 alt={displayUser?.name || "Avatar"}
               />
             </div>
 
-            {/* Top Right Actions (Link & More) */}
+            {/* ORIGINAL Edit Button — unchanged */}
             <div className="flex gap-4 text-gray-400 dark:text-gray-500 mb-2 sm:mb-4">
               <button className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors hidden">
                 <Link className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
+
               {isOwnProfile && (
                 <button
                   onClick={() => setIsEditModalOpen(true)}
                   className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
                 >
                   <Pen className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-sm font-medium hidden sm:inline">Edit Profile</span>
+                  <span className="text-sm font-medium hidden sm:inline">
+                    Edit Profile
+                  </span>
                 </button>
               )}
             </div>
           </div>
 
-          {/* Name and Title */}
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
-              {displayUser?.name || "User Name"}
-            </h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base mt-1 transition-colors duration-200">
-              @{displayUser?.username || "username"}
-            </p>
-          </div>
+          {/* Name + Username */}
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+            {displayUser?.name}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            @{displayUser?.username}
+          </p>
 
-          {/* line break */}
-          <hr className="my-6 border-t border-gray-300 dark:border-gray-600" />
-          {/* About Section */}
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 transition-colors duration-200">
-              About
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm sm:text-base transition-colors duration-200 whitespace-pre-wrap">
-              {displayUser?.about ||
-                "....."}
-            </p>
-          </div>
+          {/* Divider */}
+          <hr className="my-4 border-gray-300 dark:border-gray-600" />
+
+          {/* About */}
+          <h2 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2">
+            About
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base whitespace-pre-wrap leading-relaxed">
+            {displayUser?.about || "....."}
+          </p>
         </div>
       </div>
 
