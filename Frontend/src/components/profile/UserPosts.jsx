@@ -14,6 +14,10 @@ function UserPosts({ username }) {
   const [activeTab, setActiveTab] = useState('posts'); // 'posts' | 'saved'
 
   const isOwnProfile = user?.username === username;
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo(0, 0);
+  }, [username]);
 
   useEffect(() => {
     // Only fetch posts if username is provided
@@ -58,7 +62,7 @@ function UserPosts({ username }) {
   }, [username, token]);
 
   // Don't show anything if there's no username
-  if (!username) return null;
+  if (error === "User not found") return null;
 
   const postLabel = isOwnProfile ? 'Your Posts' : `Posts`;
   const savedLabel = 'Saved';
@@ -66,7 +70,8 @@ function UserPosts({ username }) {
   return (
     <div className="max-w-3xl w-full mx-auto mt-4 pb-8">
       {/* Tab Header */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4 bg-white dark:bg-black rounded-t-md shadow-sm">
+      {user && (
+        <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4 bg-white dark:bg-black rounded-t-md shadow-sm">
         {/* Posts Tab */}
         <button
           onClick={() => setActiveTab('posts')}
@@ -80,7 +85,8 @@ function UserPosts({ username }) {
         </button>
 
         {/* Saved Posts Tab */}
-        <button
+        {isOwnProfile && (
+          <button
           onClick={() => setActiveTab('saved')}
           className={`flex-1 py-3 text-sm font-semibold text-center flex items-center justify-center gap-2 transition-colors border-b-2 ${activeTab === 'saved'
             ? 'text-blue-600 dark:text-blue-400 border-blue-600 dark:border-blue-400'
@@ -90,7 +96,9 @@ function UserPosts({ username }) {
           <Bookmark className="w-4 h-4" />
           {savedLabel}
         </button>
+        )}
       </div>
+      )}
 
       {/* ── POSTS TAB ── */}
       {activeTab === 'posts' && (
