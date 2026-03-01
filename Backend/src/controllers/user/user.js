@@ -95,13 +95,14 @@ async function handleUserData(req, res) {
 
 async function handleCreateContact(req, res) {
   try {
-    const { name, phoneNumber, email, message } = req.body;
+    const { name, phoneNumber, email, message, type } = req.body;
 
     const newContact = await Contact.create({
       name,
       phoneNumber,
       email,
       message,
+      type,
     });
 
     res.status(201).json({
