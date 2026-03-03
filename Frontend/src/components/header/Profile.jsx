@@ -147,7 +147,7 @@ const AuthButtons = () => {
 
       <Link
         to="/signup"
-        className='font-mono text-lg text-white hover:-translate-y-1 dark:hover:text-white transition-all duration-300 rounded-2xl bg-black px-3 p-1'
+        className='font-mono text-lgz text-white hover:-translate-y-1 dark:hover:text-white transition-all duration-300 rounded-2xl bg-black px-3 p-1'
       >
         Sign Up
       </Link>

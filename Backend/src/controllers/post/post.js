@@ -68,11 +68,20 @@ async function handleGetAllPosts(req, res) {
 
     const totalPosts = await Post.countDocuments();
 
+    // Attach only the latest comment to each post (avoids sending full comment array)
+    const postsWithLatestComment = posts.map((post) => {
+      const obj = post.toObject();
+      obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      obj.commentsCount = obj.comments.length;
+      delete obj.comments; // don't send full array in feed
+      return obj;
+    });
+
     return res.status(200).json({
       message: "Posts fetched successfully",
       currentPage: page,
       totalPages: Math.ceil(totalPosts / limit),
-      posts,
+      posts: postsWithLatestComment,
     });
   } catch (error) {
     console.log("Get All Posts Error:", error.message);
@@ -115,7 +124,7 @@ async function handleLikePost(req, res) {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-        
+
     const post = await Post.findById(id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -146,7 +155,7 @@ async function handleLikePost(req, res) {
   }
 }
 
-async function handleGetUSerPosts(req,res) {
+async function handleGetUSerPosts(req, res) {
   try {
     const username = String(req.params.username || "").trim().toLowerCase();
 
@@ -164,13 +173,93 @@ async function handleGetUSerPosts(req,res) {
       .sort({ createdAt: -1 })
       .populate("author", "username name avatar");
 
+    const postsWithLatestComment = posts.map((post) => {
+      const obj = post.toObject();
+      obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      obj.commentsCount = obj.comments.length;
+      delete obj.comments;
+      return obj;
+    });
+
     return res.status(200).json({
       message: "User posts fetched successfully",
-      posts,
+      posts: postsWithLatestComment,
     });
   } catch (error) {
     console.error("Error fetching user posts:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function handleGetPostComments(req, res) {
+  try {
+    const { id } = req.params;
+
+    const post = await Post.findById(id).select("comments").lean();
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const comments = (post.comments || []).slice().reverse(); // newest first
+
+    return res.status(200).json({
+      message: "Comments fetched successfully",
+      totalComments: comments.length,
+      comments,
+    });
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function handleAddComment(req, res) {
+  try {
+    const { id } = req.params;
+    const { text } = req.body;
+    const userId = req.user.id;
+
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ message: "Comment text is required" });
+    }
+
+    if (text.length > 300) {
+      return res.status(400).json({ message: "Comment must be under 300 characters" });
+    }
+
+    const user = await User.findById(userId).select("username avatar").lean();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const post = await Post.findById(id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const newComment = {
+      userId,
+      username: user.username,
+      avatar: user.avatar || null,
+      text: text.trim(),
+      createdAt: new Date(),
+    };
+
+    post.comments.push(newComment);
+    await post.save();
+
+    const savedComment = post.comments[post.comments.length - 1];
+
+    return res.status(201).json({
+      message: "Comment added successfully",
+      comment: savedComment,
+      totalComments: post.comments.length,
+    });
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 }
 
@@ -180,5 +269,7 @@ module.exports = {
   handleGetAllPosts,
   handleDeletePost,
   handleLikePost,
-  handleGetUSerPosts
+  handleGetUSerPosts,
+  handleGetPostComments,
+  handleAddComment,
 };

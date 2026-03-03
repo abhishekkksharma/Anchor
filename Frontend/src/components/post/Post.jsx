@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Bookmark, Send, MoreHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PostMoreOptions from './PostMoreOptions';
 import PostContent from './PostContent';
+import Comments from './Comments';
 import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../config/api';
 import { resolveAvatar } from '../../utils/avatarHelper';
@@ -12,7 +13,7 @@ function Post({ post }) {
     const [liked, setLiked] = useState(false);
     const [saved, setSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(post?.likes?.length || 0);
-    const [comment, setComment] = useState('');
+    const [commentsOpen, setCommentsOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [imageError, setImageError] = useState(false);
     const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
@@ -119,13 +120,6 @@ function Post({ post }) {
         }
     };
 
-    const handleComment = (e) => {
-        e.preventDefault();
-        if (comment.trim()) {
-            console.log('Comment:', comment);
-            setComment('');
-        }
-    };
 
     // Format numbers (1000 -> 1k)
     const formatNumber = (num) => {
@@ -273,11 +267,14 @@ function Post({ post }) {
                     </button>
 
                     {/* Comment */}
-                    <button className="flex items-center gap-1.5 group">
-                        <MessageCircle className="w-6 h-6 text-neutral-600 dark:text-neutral-400 group-hover:text-blue-500 transition-colors" />
-                        {comments.length > 0 && (
-                            <span className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
-                                {formatNumber(comments.length)}
+                    <button
+                        onClick={() => setCommentsOpen(prev => !prev)}
+                        className="flex items-center gap-1.5 group"
+                    >
+                        <MessageCircle className={`w-6 h-6 transition-colors ${commentsOpen ? 'text-blue-500' : 'text-neutral-600 dark:text-neutral-400 group-hover:text-blue-500'}`} />
+                        {(post.commentsCount > 0) && (
+                            <span className={`text-sm font-medium ${commentsOpen ? 'text-blue-500' : 'text-neutral-600 dark:text-neutral-400'}`}>
+                                {formatNumber(post.commentsCount)}
                             </span>
                         )}
                     </button>
@@ -302,33 +299,14 @@ function Post({ post }) {
                 </button>
             </div>
 
-            {/* Comment Input */}
-            <div className="flex items-center gap-3 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 overflow-hidden">
-                    {currentUserAvatar ? (
-                        <img src={currentUserAvatar} alt="You" className="w-full h-full rounded-full object-cover" />
-                    ) : (
-                        'U'
-                    )}
-                </div>
-                <form onSubmit={handleComment} className="flex-1 flex items-center">
-                    <input
-                        type="text"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Write your comment"
-                        className="flex-1 bg-transparent text-sm text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none"
-                    />
-                    {comment.trim() && (
-                        <button
-                            type="submit"
-                            className="text-blue-500 font-semibold text-sm hover:text-blue-600 transition-colors"
-                        >
-                            Post
-                        </button>
-                    )}
-                </form>
-            </div>
+            {/* Comments Section */}
+            <Comments
+                postId={postId}
+                latestComment={post.latestComment || null}
+                commentsCount={post.commentsCount || 0}
+                currentUserAvatar={currentUserAvatar}
+                forceOpen={commentsOpen}
+            />
         </div>
     );
 }
