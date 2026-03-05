@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Home, About, Auth, Login, Signup, Connect, Profile, Contact } from './pages';
+import { Home, About, Auth, Login, Signup, Connect, Profile, Contact, NewsLetter, Community } from './pages';
 import ProtectedRoute, { PublicRoute } from './components/ProtectedRoute';
 import Navbar from './components/header/navbar';
 
@@ -48,6 +48,20 @@ const App = () => {
         <Route path='/contact' element={
           <ProtectedRoute>
             <Contact />
+          </ProtectedRoute>
+        } />
+
+        {/* Newsletter page */}
+        <Route path='/newsletter' element={
+          <ProtectedRoute>
+            <NewsLetter />
+          </ProtectedRoute>
+        } />
+
+        {/* Newsletter page */}
+        <Route path='/community' element={
+          <ProtectedRoute>
+            <Community />
           </ProtectedRoute>
         } />
 
