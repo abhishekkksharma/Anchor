@@ -1,5 +1,6 @@
 import React from 'react';
 import { resolveAvatar } from "../../utils/avatarHelper";
+import { Link } from 'react-router-dom';
 
 export function NearbyUserCard({ user }) {
     const isDefaultUiAvatar = user.avatar && user.avatar.includes("ui-avatars.com");
@@ -23,7 +24,7 @@ export function NearbyUserCard({ user }) {
 
             <div className="mb-4">
                 <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{user.name}</h2>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">@{user.username}</p>
+                <Link to={`/profile/${user.username}`} className="text-sm hover:underline text-neutral-500 dark:text-neutral-400">@{user.username}</Link>
             </div>
 
             <hr className="border-neutral-200 dark:border-neutral-800 mb-4" />
