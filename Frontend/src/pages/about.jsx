@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Navbar from "../components/header/navbar";
 import { GridSmallBackground } from "../components/ui/grid-small-background";
 import Hero  from "../components/about/Hero";
@@ -9,8 +9,17 @@ import FAQSection from "@/components/Faqs";
 import Contact from "@/components/contact";
 import Footer from "@/components/Footer";
 import People from "@/components/about/People";
+import CheckboxGrid from "@/components/CheckBoxes";
+import GetGrids from "@/components/GetGrids"
 
 const About = () => {
+
+  //scroll to top
+  useEffect(() => {
+      // window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo(0, 0); //hard scroll
+    }, []);
+
   const faqs = [
     {
       question: "Is this platform free to use?",
@@ -56,6 +65,8 @@ const About = () => {
           <Section2/>
           <FAQSection faqs={faqs}/>
           <Contact/>
+          {/* <CheckboxGrid/> */}
+          {/* <GetGrids/> */}
           {/* <ContactForm/> */}
       </GridSmallBackground>
       <Footer/>
