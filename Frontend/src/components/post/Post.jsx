@@ -8,11 +8,12 @@ import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../config/api';
 import { resolveAvatar } from '../../utils/avatarHelper';
 import PostImageCarousel from "./postImages"
+import SavePost from "./savepost";
 
-function Post({ post }) {
+function Post({ post, initialSaved }) {
     const { user, token } = useAuth();
     const [liked, setLiked] = useState(false);
-    const [saved, setSaved] = useState(false);
+    // const [saved, setSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(post?.likes?.length || 0);
     const [commentsOpen, setCommentsOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -229,7 +230,7 @@ function Post({ post }) {
                     </button>
 
                     {/* Save */}
-                    <button
+                    {/* <button
                         onClick={() => setSaved(!saved)}
                         className="flex items-center gap-1.5 group"
                     >
@@ -239,7 +240,8 @@ function Post({ post }) {
                                 : 'text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white'
                                 }`}
                         />
-                    </button>
+                    </button> */}
+                    <SavePost postId={postId} initialSaved={initialSaved !== undefined ? initialSaved : !!post.isSaved} />
                 </div>
 
                 {/* Share */}

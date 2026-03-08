@@ -1,8 +1,8 @@
 const express = require('express');
-const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername } = require('../controllers/user/user');
+const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername, handleSavePostToUserData, handleUnsavePost, handleGetSavedPosts } = require('../controllers/user/user');
 const { handleCreatePost, handleGetAllPosts, handleDeletePost, handleLikePost, handleGetUSerPosts, handleGetPostComments, handleAddComment } = require('../controllers/post/post');
 const { handleGetNearbyUsers, handleGetUserLocation, handleSetUserGeodata } = require("../controllers/connect/geoDataHandeler");
-const {handleAddGridArt, handleGetGrids} = require("../controllers/gridArt/grid")
+const { handleAddGridArt, handleGetGrids } = require("../controllers/gridArt/grid")
 const authMiddleware = require('../mildewares/authMiddleware');
 
 
@@ -13,6 +13,9 @@ router.post('/login', handleUserLogin);
 router.get('/userData', authMiddleware, handleUserData);
 router.patch('/updateData', authMiddleware, handleUpdateUserData);
 router.get('/profile', handleGetProfileByUsername);
+router.post('/post/savepost/:id', authMiddleware, handleSavePostToUserData);
+router.delete('/post/savepost/:id', authMiddleware, handleUnsavePost);
+router.get('/post/savedposts/:username', authMiddleware, handleGetSavedPosts);
 
 router.post('/post/create', authMiddleware, handleCreatePost);
 router.get('/post/allPosts', authMiddleware, handleGetAllPosts);
@@ -23,8 +26,8 @@ router.get('/post/comments/:id', authMiddleware, handleGetPostComments);
 router.post('/post/comment/:id', authMiddleware, handleAddComment);
 
 router.post('/contact/contactForm', handleCreateContact);
-router.post('/grid',handleAddGridArt);
-router.get('/grid',handleGetGrids);
+router.post('/grid', handleAddGridArt);
+router.get('/grid', handleGetGrids);
 
 
 router.get("/connect/nearby", authMiddleware, handleGetNearbyUsers);

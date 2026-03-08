@@ -61,19 +61,25 @@ async function handleGetAllPosts(req, res) {
     const skip = (page - 1) * limit;
 
     const posts = await Post.find()
-      .sort({ createdAt: -1 }) // latest first
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("author", "username name avatar");
 
     const totalPosts = await Post.countDocuments();
 
-    // Attach only the latest comment to each post (avoids sending full comment array)
+    // Fetch the logged-in user's saved post IDs for isSaved flag
+    const currentUser = await User.findById(req.user.id).select("savedPosts").lean();
+    const savedSet = new Set(
+      (currentUser?.savedPosts || []).map((id) => id.toString())
+    );
+
     const postsWithLatestComment = posts.map((post) => {
       const obj = post.toObject();
       obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
       obj.commentsCount = obj.comments.length;
-      delete obj.comments; // don't send full array in feed
+      obj.isSaved = savedSet.has(obj._id.toString());
+      delete obj.comments;
       return obj;
     });
 
@@ -173,10 +179,17 @@ async function handleGetUSerPosts(req, res) {
       .sort({ createdAt: -1 })
       .populate("author", "username name avatar");
 
+    // Fetch the logged-in user's saved post IDs for isSaved flag
+    const currentUser = await User.findById(req.user.id).select("savedPosts").lean();
+    const savedSet = new Set(
+      (currentUser?.savedPosts || []).map((id) => id.toString())
+    );
+
     const postsWithLatestComment = posts.map((post) => {
       const obj = post.toObject();
       obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
       obj.commentsCount = obj.comments.length;
+      obj.isSaved = savedSet.has(obj._id.toString());
       delete obj.comments;
       return obj;
     });
