@@ -269,7 +269,7 @@ async function handleGetSavedPosts(req, res) {
         options: { sort: { createdAt: -1 } },
         populate: {
           path: "author",
-          select: "username avatar"
+          select: "name username avatar"
         }
       });
 

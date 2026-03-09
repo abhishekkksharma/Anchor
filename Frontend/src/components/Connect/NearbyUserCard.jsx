@@ -9,7 +9,7 @@ export function NearbyUserCard({ user }) {
     return (
         <div className="bg-white dark:bg-black rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm p-4 w-full flex flex-col pt-12 relative mt-10">
             {/* Avatar placed at the top overlapping the border */}
-            <div className="absolute -top-10 left-4">
+            <Link to={`/profile/${user.username}`} className="absolute -top-10 left-4">
                 <div className="relative size-20 rounded-full overflow-hidden border-4 border-white dark:border-black shadow-sm bg-neutral-100 dark:bg-neutral-900">
                     <img
                         src={assignedAvatar}
@@ -20,7 +20,7 @@ export function NearbyUserCard({ user }) {
                         }}
                     />
                 </div>
-            </div>
+            </Link>
 
             <div className="mb-4">
                 <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">{user.name}</h2>

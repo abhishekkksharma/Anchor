@@ -8,7 +8,8 @@ import Profile from "./profile"
 import Contact from "./contact"
 import NewsLetter from "./newsLetters"
 import Community from "./comunity"
+import Settings from "./settings"
 
 
-export { About, Home, Auth, Login, Signup, Connect, Profile, Contact, NewsLetter, Community };
+export { About, Home, Auth, Login, Signup, Connect, Profile, Contact, NewsLetter, Community, Settings };
 
