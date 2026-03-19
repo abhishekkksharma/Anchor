@@ -37,9 +37,9 @@ const userSchema = new mongoose.Schema(
       default: "https://ui-avatars.com/api/?background=random&name=User",    // Default avatar
     },
 
-    about:{
-      type:String,
-      default:"",
+    about: {
+      type: String,
+      default: "",
     },
 
     posts: [
@@ -64,6 +64,14 @@ const userSchema = new mongoose.Schema(
     isVerified: {
       type: Boolean,
       default: false,
+    },
+
+    otp: {
+      type: Number,
+    },
+
+    otpExpiry: {
+      type: Date,
     },
 
     location: {

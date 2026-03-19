@@ -292,6 +292,28 @@ async function handleGetSavedPosts(req, res) {
   }
 }
 
+async function handleVerifyOTP(req, res) {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({ message: "User not found" });
+  }
+
+  if (user.otp !== Number(otp) || user.otpExpiry < Date.now()) {
+    return res.status(400).json({ message: "Invalid or expired OTP" });
+  }
+
+  user.isVerified = true;
+  user.otp = null;
+  user.otpExpiry = null;
+
+  await user.save();
+
+  return res.json({ message: "Email verified successfully" });
+}
+
 
 module.exports = {
   handleUserSignup,
