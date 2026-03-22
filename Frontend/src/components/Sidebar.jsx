@@ -285,8 +285,8 @@ const Sidebar = () => {
     return (
       <>
         {/* ── Bottom Navigation Bar ── */}
-        <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/40 dark:bg-gray-900/30 backdrop-blur-2xl border-t border-white/40 dark:border-white/10 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.4)]" style={{ WebkitBackdropFilter: 'blur(24px)' }}>
-          <div className="flex items-center justify-around px-2 py-2 pb-safe">
+        <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-zinc-900/30 backdrop-blur-2xl border-t border-white/40 dark:border-white/10 shadow-[0_-8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_-8px_32px_rgba(0,0,0,0.4)]" style={{ WebkitBackdropFilter: 'blur(24px)' }}>
+          <div className="flex items-center justify-around px-2 py-1 pb-safe">
             {/* First 4 nav items */}
             {bottomNavItems.map((item) => {
               const Icon = item.icon;
@@ -383,7 +383,7 @@ const Sidebar = () => {
   /* ─── DESKTOP RENDER ─── */
   return (
     <aside
-      className={`fixed top-20 pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"}`}
+      className={`fixed top-14 pb-10 bg-white/10 dark:bg-black/40 backdrop-blur-lg border border-white/20 dark:border-gray-800/50 transition-all duration-500 ease-out flex flex-col shadow-xl rounded-2xl ${isExpanded ? "w-64" : "w-16"}`}
       style={{ right: "calc(50% + 18rem + 1.25rem)" }}
     >
       {desktopSidebarContent(isExpanded)}

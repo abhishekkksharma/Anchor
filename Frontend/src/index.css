@@ -13,6 +13,24 @@
         transform: translateY(0);
     }
 }
+::selection {
+  background: #0099ff0f;
+  font-weight: 800;
+  color: #0099ff;
+}
+
+.dark ::selection {
+  background: #0099ff0f;
+  font-weight: 800;
+  color: #0099ff;
+}
+
+
+::-moz-selection {
+   background: #0099ff0f;
+  font-weight: 800;
+  color: #0099ff;
+}
 
 @keyframes heroTextReveal {
     0% {

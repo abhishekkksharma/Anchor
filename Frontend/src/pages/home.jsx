@@ -7,6 +7,7 @@ import UploadPost from "@/components/post/UploadPost";
 import Post from "@/components/post/Post";
 import PostSkeleton from "@/components/post/PostSkeleton";
 import { usePopup } from "@/context/PopupContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -20,12 +21,17 @@ const Home = () => {
   const navigate = useNavigate();
   const { showPopup } = usePopup();
 
-  // scroll to top 
+  // scroll to top
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     // window.scrollTo(0, 0); //hard scroll
   }, []);
 
+  const handleDeletePost = (deletedPostId) => {
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post._id !== deletedPostId),
+    );
+  };
 
   const fetchPosts = async (pageNum) => {
     if (fetchingRef.current || loading) return;
@@ -79,7 +85,6 @@ const Home = () => {
         }, 1000);
         return;
       }
-
     } catch (error) {
       console.error("Error fetching posts:", error);
     } finally {
@@ -133,15 +138,25 @@ const Home = () => {
       <Sidebar />
 
       {/* Main content — centered on screen */}
-      <main className="min-h-screen pt-12 lg:pt-20 pb-20 px-">
-        <div className="w-full max-w-xl mx-auto flex flex-col gap-2 lg:gap-6">
+      <main className="min-h-screen pt-14 lg:pt-15 pb-20 px-">
+        <div className="w-full max-w-xl mx-auto flex flex-col gap-1 lg:gap-6">
           {/* Create Post */}
           <UploadPost onSubmit={handleNewPost} />
 
           {/* Posts Feed */}
-          {posts.map((post) => (
-            <Post key={post._id} post={post} />
-          ))}
+          <AnimatePresence>
+            {posts.map((post) => (
+              <motion.div
+                key={post._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                transition={{ duration: 0.25 }}
+              >
+                <Post post={post} onDelete={handleDeletePost} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
 
           {/* Infinite scroll loader */}
           <div

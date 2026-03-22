@@ -33,7 +33,7 @@ const PostContent = ({ content, maxLength = 180 }) => {
 
   return (
     <div className="px-4 pb-3">
-      <p className="text-neutral-800 dark:text-neutral-200 text-sm leading-relaxed break-words">
+      <p className="text-neutral-800 dark:text-neutral-200 text-sm leading-relaxed break-words whitespace-pre-line">
         {linkifyText(displayText)}
       </p>
 

@@ -10,7 +10,7 @@ import { resolveAvatar } from '../../utils/avatarHelper';
 import PostImageCarousel from "./postImages"
 import SavePost from "./savepost";
 
-function Post({ post, initialSaved }) {
+function Post({ post, initialSaved, onDelete }) {
     const { user, token } = useAuth();
     const [liked, setLiked] = useState(false);
     // const [saved, setSaved] = useState(false);
@@ -149,7 +149,7 @@ function Post({ post, initialSaved }) {
     const postId = post._id?.$oid || post._id;
 
     return (
-        <div className="bg-white dark:bg-[#0c0e12] rounded-xl border-2 border-neutral-300 dark:border-neutral-700 overflow-hidden shadow-lg">
+        <div className="bg-white dark:bg-[#0c0e12] rounded- lg:rounded-xl border-2 border-neutral-300 dark:border-neutral-700 overflow-hidden shadow-lg">
             {/* Header */}
             <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
@@ -184,7 +184,11 @@ function Post({ post, initialSaved }) {
                 </div>
 
                 {/* More Options */}
-                <PostMoreOptions postId={postId} authorId={authorId} />
+                <PostMoreOptions
+  postId={postId} 
+  authorId={authorId}
+  onDelete={onDelete}
+/>
             </div>
 
             {/* Content */}
