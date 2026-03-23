@@ -205,7 +205,7 @@ function Comments({ postId, latestComment, commentsCount: initialCount, currentU
             )}
 
             {/* Comment input */}
-            <div className="flex items-center gap-3 px-4 py-3 border-t border-neutral-100 dark:border-neutral-800">
+            <div className="flex items-center gap-3 px-4 py-2 my-1 border rounded-full border-neutral-300 dark:border-neutral-800">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs flex-shrink-0 overflow-hidden">
                     {currentUserAvatar ? (
                         <img src={currentUserAvatar} alt="You" className="w-full h-full rounded-full object-cover" />

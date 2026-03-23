@@ -113,7 +113,7 @@ function UserPosts({ username }) {
 
       {/* Tab Header — only shown when logged in */}
       {user && (
-        <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4 bg-white dark:bg-black rounded-t-md shadow-sm">
+        <div className="flex border-b border-gray-200 dark:border-gray-700 mb- bg-white dark:bg-black rounded-t-md shadow-sm">
 
           {/* Posts Tab */}
           <button
@@ -148,7 +148,7 @@ function UserPosts({ username }) {
         <>
           {/* Loading skeletons */}
           {loading && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-">
               {[1, 2, 3].map((i) => <PostSkeleton key={i} />)}
             </div>
           )}
@@ -183,7 +183,7 @@ function UserPosts({ username }) {
 
           {/* Posts list */}
           {!loading && !error && posts.length > 0 && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-">
               {posts.map((post) => (
                 <Post key={post._id} post={post} />
               ))}
@@ -197,7 +197,7 @@ function UserPosts({ username }) {
         <>
           {/* Loading skeletons */}
           {savedLoading && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-">
               {[1, 2, 3].map((i) => <PostSkeleton key={i} />)}
             </div>
           )}
@@ -220,7 +220,7 @@ function UserPosts({ username }) {
 
           {/* Saved posts list */}
           {!savedLoading && !savedError && savedPosts.length > 0 && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-">
               {savedPosts.map((post) => (
                 <Post key={post._id?.$oid || post._id} post={post} initialSaved={true} />
               ))}

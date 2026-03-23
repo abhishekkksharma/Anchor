@@ -66,7 +66,7 @@ export default function PostImageCarousel({ photos = [] }) {
           src={photos[currentImageIndex]}
           alt="Post"
           onClick={() => setIsOpen(true)}
-          className="w-full max-h-[500px] object-contain mx-auto bg-black cursor-zoom-in"
+          className="w-full max-h-fit lg:max-h-[500px] object-contain mx-auto bg-black cursor-zoom-in"
         />
 
         {/* Left Arrow */}
@@ -126,7 +126,7 @@ export default function PostImageCarousel({ photos = [] }) {
           <img
             src={photos[currentImageIndex]}
             alt="Fullscreen"
-            className="max-w-[60%] max-h-[80%] object-contain"
+            className="max-w-full lg:max-w-[60%] max-h-[80%] object-contain"
             onClick={(e) => e.stopPropagation()}
           />
 

@@ -139,7 +139,7 @@ const Home = () => {
 
       {/* Main content — centered on screen */}
       <main className="min-h-screen pt-14 lg:pt-15 pb-20 px-">
-        <div className="w-full max-w-xl mx-auto flex flex-col gap-1 lg:gap-6">
+        <div className="w-full max-w-xl mx-auto flex flex-col lg:gap-6">
           {/* Create Post */}
           <UploadPost onSubmit={handleNewPost} />
 
