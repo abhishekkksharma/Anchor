@@ -14,6 +14,7 @@ import {
   Avatar5,
 } from "../assets/Avatars/index";
 import AuthPageHero from "@/components/AuthPages/AuthPageHero";
+import GoogleLoginBtn from "@/components/auth/GoogleLoginBtn";
 
 const API_BASE = `${API_URL}/user`;
 
@@ -476,6 +477,16 @@ export default function Signup() {
                 )}
               </button>
             </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3 my-6">
+              <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+              <span className="text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">or continue with</span>
+              <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+            </div>
+
+            {/* Google Sign Up */}
+            <GoogleLoginBtn label="Sign up with Google" />
 
             {/* Mobile Sign In Link */}
             <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 lg:hidden">

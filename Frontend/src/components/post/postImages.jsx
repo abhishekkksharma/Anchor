@@ -66,7 +66,7 @@ export default function PostImageCarousel({ photos = [] }) {
           src={photos[currentImageIndex]}
           alt="Post"
           onClick={() => setIsOpen(true)}
-          className="w-full max-h-fit lg:max-h-[500px] object-contain mx-auto bg-black cursor-zoom-in"
+          className="w-full max-h-140 lg:max-h-[500px] object-contain mx-auto bg-black cursor-zoom-in"
         />
 
         {/* Left Arrow */}

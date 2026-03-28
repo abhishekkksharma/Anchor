@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Logo2 from "../assets/logo2.png";
 import AuthPageHero from "@/components/AuthPages/AuthPageHero";
+import GoogleLoginBtn from '@/components/auth/GoogleLoginBtn'
 
 const API_BASE = `${API_URL}/user`;
 
@@ -244,6 +245,16 @@ export default function Login() {
                                 )}
                             </button>
                         </form>
+
+                        {/* Divider */}
+                        <div className="flex items-center gap-3 my-6">
+                            <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+                            <span className="text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">or continue with</span>
+                            <div className="flex-1 h-px bg-gray-200 dark:bg-zinc-700" />
+                        </div>
+
+                        {/* Google Login */}
+                        <GoogleLoginBtn label="Sign in with Google" />
 
                         {/* Mobile Sign Up Link */}
                         <p className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400 lg:hidden">
