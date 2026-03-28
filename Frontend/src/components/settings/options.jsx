@@ -46,7 +46,7 @@ const SettingsOptions = () => {
       </aside>
 
       {/* Mobile Settings Nav (styled minimally to match serif theme) */}
-      <div className="md:hidden w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center overflow-x-auto px-6 py-4 gap-6 sticky top-14 z-40 scrollbar-hide">
+      <div className="md:hidden w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 flex items-center overflow-x-auto px-6 py-4 gap-6 sticky pt-15 z-40 scrollbar-hide">
           {items.map((item, index) => {
             const itemPath = item.path;
             const isActive = tab === itemPath || (!tab && index === 0);
