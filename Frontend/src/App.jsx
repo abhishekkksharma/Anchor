@@ -65,8 +65,13 @@ const App = () => {
           </ProtectedRoute>
         } />
 
-        {/* Newsletter page */}
+        {/* Settings page */}
         <Route path='/settings' element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } />
+        <Route path='/settings/:tab' element={
           <ProtectedRoute>
             <Settings />
           </ProtectedRoute>
