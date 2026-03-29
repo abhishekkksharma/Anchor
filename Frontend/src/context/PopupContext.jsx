@@ -25,7 +25,7 @@ export const PopupProvider = ({ children }) => {
     <PopupContext.Provider value={{ showPopup }}>
       {children}
 
-      <div className="fixed top-5 right-5 z-50 flex flex-col gap-4">
+      <div className="fixed top-15 right-5 z-50 flex flex-col gap-4">
         <AnimatePresence>
           {popups.map((popup) => (
             <Popup

@@ -185,10 +185,10 @@ function Post({ post, initialSaved, onDelete }) {
 
                 {/* More Options */}
                 <PostMoreOptions
-  postId={postId} 
-  authorId={authorId}
-  onDelete={onDelete}
-/>
+                    postId={postId}
+                    authorId={authorId}
+                    onDelete={onDelete}
+                />
             </div>
 
             {/* Content */}

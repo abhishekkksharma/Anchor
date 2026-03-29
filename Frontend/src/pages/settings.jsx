@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import ComingSoon from "@/components/ComingSoon";
 import SettingsOptions from "@/components/settings/options";
 import UpdateLocation from "@/components/Connect/UpdateLocation";
 import EditProfileModal from "@/components/profile/EditProfileModal";
+import Location from "@/components/settings/Location";
+import { ArrowBigLeft } from "lucide-react"
 
 function Settings() {
   const { tab } = useParams();
@@ -17,7 +19,13 @@ function Settings() {
 
     switch (currentTab.toLowerCase()) {
       case "update-location":
-        return <UpdateLocation />;
+        return (
+          <div className="flex flex-col gap-4">
+            <Location />
+            <hr className="border-neutral-200 dark:border-neutral-800" />
+            <UpdateLocation />
+          </div>
+        );
 
       case "update-account-data":
         return <EditProfileModal inline={true} />;
@@ -46,8 +54,8 @@ function Settings() {
 
       <main className="min-h-screen md:pt-20 pb-20 px-4">
         <div className="w-full max-w-xl mx-auto flex flex-col gap-6 mt-6 md:mt-0 lg:mt-6">
-          
-          <div className=" min-h-[60vh] p-6 flex flex-col items-center">
+
+          <div className=" min-h-[60vh] p-6 pt-0 flex flex-col items-center">
             <div className="w-full flex justify-center">
               <div className="w-full max-w-md">
                 {renderContent()}
@@ -55,7 +63,15 @@ function Settings() {
             </div>
 
           </div>
-
+          <div className="fixed bottom-4 left-4 z-50 md:hidden">
+            <Link
+              to="/"
+              className="flex items-center gap-2 bg-white dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-full px-4 py-2 shadow-md active:scale-95 transition"
+            >
+              <ArrowBigLeft size={16} />
+              <span className="text-sm font-medium">Go back</span>
+            </Link>
+          </div>
         </div>
       </main>
     </div>
