@@ -5,8 +5,8 @@ const SettingsOptions = () => {
   const { tab } = useParams();
 
   const items = [
-    { name: 'Update Account', path: 'update-account-data' },
-    { name: 'Update Location', path: 'update-location' },
+    { name: 'Account', path: 'update-account-data' },
+    { name: 'Location', path: 'update-location' },
     // { name: 'Story', path: 'story' },
     // { name: 'People', path: 'people' },
     // { name: 'Newsroom', path: 'newsroom' },
@@ -16,7 +16,7 @@ const SettingsOptions = () => {
     <>
       {/* Desktop Settings Sidebar - Taking the EXACT position of the global Sidebar but with minimal serif styling */}
       <aside
-        className="hidden md:flex fixed top-14 pb-10 bg-white dark:bg-black border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-out flex-col w-64 h-screen z-30"
+        className="hidden md:flex fixed top-14 pb-10  border-r border-gray-200 dark:border-gray-800 transition-all duration-500 ease-out flex-col w-64 h-screen z-30"
         style={{ right: "calc(50% + 18rem + 1.25rem)" }}
       >
         <ul className="flex flex-col pt-8 px-6">
@@ -28,14 +28,14 @@ const SettingsOptions = () => {
               <li key={index} className="group flex flex-col">
                 <Link
                   to={`/settings/${itemPath}`}
-                  className="w-full py-4 text-left"
+                  className={`w-full pl-2 py-1 my-1 text-left hover:bg-gray-100 hover:dark:bg-neutral-900 rounded-2xl ${isActive ? 'bg-gray-100 dark:bg-zinc-900':""}`}
                 >
-                  <span className={`text-[22px] font-serif tracking-wide transition-opacity ${isActive ? 'text-black dark:text-white opacity-100' : 'text-black dark:text-white opacity-80 group-hover:opacity-100'}`}>
+                  <span className={`text-[20px] font-serif tracking-wide transition-opacity ${isActive ? 'text-black dark:text-white opacity-100' : 'text-black dark:text-white opacity-80 group-hover:opacity-100'}`}>
                     {item.name}
                   </span>
                 </Link>
 
-                {/* Divider - thin line as seen in screenshot */}
+                {/* Divider*/}
                 {index !== items.length - 1 && (
                   <div className="w-full h-px bg-gray-200 dark:bg-gray-800"></div>
                 )}

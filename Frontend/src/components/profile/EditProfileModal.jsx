@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Upload, Loader2, User, Mail, Link as LinkIcon } from "lucide-react";
+import { X, Upload, Loader2, User, Mail, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useAvatarUpload from "@/hooks/useAvatarUpload";
 import { useAuth } from "@/context/AuthContext";
@@ -7,6 +7,7 @@ import { resolveAvatar } from "@/utils/avatarHelper";
 import { API_URL } from "@/config/api";
 import { usePopup } from "@/context/PopupContext";
 
+// ─── Main Modal ───────────────────────────────────────────────────────────────
 function EditProfileModal({ isOpen, onClose, inline = false }) {
   const { user, login, token } = useAuth();
   const { uploadAvatar, isUploading } = useAvatarUpload();
@@ -21,14 +22,15 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
   });
 
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar || "");
-  const [previewAvatar, setPreviewAvatar] = useState(
-    resolveAvatar(user?.avatar),
-  );
+  const [previewAvatar, setPreviewAvatar] = useState(resolveAvatar(user?.avatar));
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPhotoMenu, setShowPhotoMenu] = useState(false);
 
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+  const photoMenuRef = useRef(null);
 
-  // Reset the state every time it opens or initializes to reflect the latest user data
+  // Reset state on open
   useEffect(() => {
     if (isOpen || inline) {
       setFormData({
@@ -42,6 +44,18 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
     }
   }, [isOpen, inline, user]);
 
+  // Close photo menu on outside click
+  useEffect(() => {
+    if (!showPhotoMenu) return;
+    const handler = (e) => {
+      if (photoMenuRef.current && !photoMenuRef.current.contains(e.target)) {
+        setShowPhotoMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showPhotoMenu]);
+
   if (!isOpen && !inline) return null;
 
   const handleInputChange = (e) => {
@@ -49,18 +63,9 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Show local preview immediately
-    const localUrl = URL.createObjectURL(file);
-    setPreviewAvatar(localUrl);
-
+  // ── Shared upload logic ────────────────────────────────────────────────────
+  const uploadFile = async (file, localPreviewUrl) => {
+    setPreviewAvatar(localPreviewUrl);
     try {
       const url = await uploadAvatar(file);
       setAvatarUrl(url);
@@ -68,20 +73,38 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
     } catch (err) {
       console.error("Avatar upload failed:", err);
       showPopup(err.message || "Failed to upload profile photo", "error");
-      // Revert preview on failure
       setPreviewAvatar(resolveAvatar(user?.avatar));
     }
   };
 
+  // ── File input handler ─────────────────────────────────────────────────────
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const localUrl = URL.createObjectURL(file);
+    setShowPhotoMenu(false);
+    await uploadFile(file, localUrl);
+  };
+
+  // ── Camera capture handler ─────────────────────────────────────────────────
+  const handleCameraCapture = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const localUrl = URL.createObjectURL(file);
+    await uploadFile(file, localUrl);
+    e.target.value = ""; // reset so the same shot can be retaken
+  };
+
+  // ── Avatar click → show menu ───────────────────────────────────────────────
+  const handleImageClick = () => setShowPhotoMenu((v) => !v);
+
+  // ── Form submit ────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      const payload = {
-        ...formData,
-        avatar: avatarUrl,
-      };
+      const payload = { ...formData, avatar: avatarUrl };
 
       const res = await fetch(`${API_URL}/user/updateData`, {
         method: "PATCH",
@@ -92,20 +115,18 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
         body: JSON.stringify(payload),
       });
 
-      // Handle non-JSON responses (like 404 HTML pages or empty responses)
       const contentType = res.headers.get("content-type");
       let data;
       if (contentType && contentType.includes("application/json")) {
         data = await res.json();
       } else {
         const text = await res.text();
-        console.error("Non-JSON response from server:", res.status, text);
+        console.error("Non-JSON response:", res.status, text);
         throw new Error(`Server error: ${res.status} ${res.statusText}`);
       }
 
       if (res.ok) {
         showPopup("Profile updated successfully!", "success");
-        // Update local context
         const oldUsername = user.username;
         const newUsername = data.userData.username;
         login(data.userData, token);
@@ -113,13 +134,8 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
         if (!inline) {
           setTimeout(() => {
             onClose();
-            if (oldUsername !== newUsername) {
-              navigate(`/profile/${newUsername}`);
-            }
+            if (oldUsername !== newUsername) navigate(`/profile/${newUsername}`);
           }, 500);
-        } else if (oldUsername !== newUsername) {
-          // If inline, just navigate if username changed
-          // navigate(`/profile/${newUsername}`);
         }
       } else {
         throw new Error(data?.message || "Failed to update profile");
@@ -141,12 +157,10 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
       }
       onClick={(e) => !inline && e.stopPropagation()}
     >
-      {/* Header - Hidden in inline mode */}
+      {/* Header */}
       {!inline && (
         <div className="px-6 py-4 border-b border-gray-100 dark:border-zinc-800 flex justify-between items-center bg-gray-50/50 dark:bg-zinc-900/50">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-            Edit Profile
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Edit Profile</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors p-1 rounded-full hover:bg-gray-100 dark:hover:bg-zinc-800"
@@ -161,26 +175,65 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Avatar Upload */}
           <div className={`flex flex-col ${inline ? "items-start" : "items-center"}`}>
-            <div
-              className="relative group cursor-pointer"
-              onClick={handleImageClick}
-            >
-              <img
-                src={previewAvatar}
-                alt="Profile"
-                className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-zinc-800 shadow-sm transition-opacity ${isUploading ? "opacity-50" : "group-hover:opacity-75"}`}
-              />
-
-              <div className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                <Upload className="w-8 h-8 text-white" />
+            <div className="relative" ref={photoMenuRef}>
+              {/* Avatar */}
+              <div
+                className="relative group cursor-pointer"
+                onClick={handleImageClick}
+                title="Change profile photo"
+              >
+                <img
+                  src={previewAvatar}
+                  alt="Profile"
+                  className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-4 border-white dark:border-zinc-800 shadow-sm transition-opacity ${
+                    isUploading ? "opacity-50" : "group-hover:opacity-75"
+                  }`}
+                />
+                <div className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
+                  <Camera className="w-7 h-7 text-white" />
+                </div>
+                {isUploading && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/20">
+                    <Loader2 className="w-6 h-6 text-white animate-spin" />
+                  </div>
+                )}
               </div>
 
-              {isUploading && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/20">
-                  <Loader2 className="w-6 h-6 text-white animate-spin" />
+              {/* Photo source menu */}
+              {showPhotoMenu && (
+                <div className="absolute left-1/2 -translate-x-1/2 mt-2 top-full z-10 w-48 bg-white dark:bg-zinc-800 rounded-xl shadow-xl border border-gray-100 dark:border-zinc-700 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                  {/* Camera option — triggers native OS camera */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPhotoMenu(false);
+                      cameraInputRef.current?.click();
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
+                  >
+                    <Camera className="w-4 h-4 text-blue-500 shrink-0" />
+                    Take a photo
+                  </button>
+
+                  {/* Divider */}
+                  <div className="border-t border-gray-100 dark:border-zinc-700" />
+
+                  {/* Upload option */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPhotoMenu(false);
+                      fileInputRef.current?.click();
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
+                  >
+                    <Upload className="w-4 h-4 text-blue-500 shrink-0" />
+                    Upload from device
+                  </button>
                 </div>
               )}
 
+              {/* Hidden file input (gallery) */}
               <input
                 type="file"
                 ref={fileInputRef}
@@ -188,7 +241,18 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
                 accept="image/jpeg, image/png, image/webp"
                 onChange={handleFileChange}
               />
+
+              {/* Hidden camera input — opens native OS camera directly */}
+              <input
+                type="file"
+                ref={cameraInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="user"
+                onChange={handleCameraCapture}
+              />
             </div>
+
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
               Change Profile Photo
             </p>
@@ -269,7 +333,13 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
           </div>
 
           {/* Actions */}
-          <div className={`pt-4 flex gap-3 ${inline ? "mt-4" : "justify-end border-t border-gray-100 dark:border-zinc-800 mt-6"}`}>
+          <div
+            className={`pt-4 flex gap-3 ${
+              inline
+                ? "mt-4"
+                : "justify-end border-t border-gray-100 dark:border-zinc-800 mt-6"
+            }`}
+          >
             {!inline && (
               <button
                 type="button"
@@ -283,7 +353,9 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
             <button
               type="submit"
               disabled={isSubmitting || isUploading}
-              className={`px-5 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed ${inline ? "w-full md:w-auto" : ""}`}
+              className={`px-5 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed ${
+                inline ? "w-full md:w-auto" : ""
+              }`}
             >
               {isSubmitting ? (
                 <>
@@ -300,9 +372,7 @@ function EditProfileModal({ isOpen, onClose, inline = false }) {
     </div>
   );
 
-  if (inline) {
-    return content;
-  }
+  if (inline) return content;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
