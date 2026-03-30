@@ -134,7 +134,8 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-black">
+    <div className="min-h-screen bg-neutral-50 dark:bg-black"
+    >
       <Sidebar />
 
       {/* Main content — centered on screen */}
