@@ -41,7 +41,7 @@ function UploadPostCompact({ onClick }) {
       onClick={onClick}
       className="bg-white dark:bg-neutral-900 rounded-xl p-3 cursor-pointer 
              hover:bg-neutral-50 dark:hover:bg-neutral-800
-             transition-colors border border-neutral-200 dark:border-neutral-800"
+             border border-neutral-200 dark:border-neutral-800"
     >
       {/* Avatar + Placeholder */}
       <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ function UploadPostCompact({ onClick }) {
       {/* Divider + Toolbar */}
       <div className="border-t border-neutral-200 dark:border-neutral-800 mt-2 pt-2 ml-10">
         <div className="flex items-center justify-between">
-          <button className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+          <button className="p-1.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800">
             <Image className="w-5 h-5 text-blue-500" />
           </button>
 
