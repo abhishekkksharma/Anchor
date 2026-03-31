@@ -1,14 +1,18 @@
 import React from 'react'
 import Sidebar from '@/components/Sidebar'
-import ComingSoon from '@/components/ComingSoon'
+import Sample from "@/components/newsletters/sample"
 
-function newsLetters() {
+function NewsLetters() {
   return (
-    <div className='min-h-screen flex justify-center items-center dark:bg-black'>
+    <div className='min-h-screen bg-neutral-50 dark:bg-black'>
         <Sidebar/>
-        <ComingSoon message="Get global tech insights"/>
+        <main className="min-h-screen pt-14 lg:pt-15 pb-20 px-4 sm:px-0">
+            <div className="w-full max-w-xl mx-auto flex flex-col lg:gap-6">
+                 <Sample/>
+            </div>
+        </main>
     </div>
   )
 }
 
-export default newsLetters
+export default NewsLetters
