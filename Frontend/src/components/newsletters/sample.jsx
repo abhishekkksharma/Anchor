@@ -95,7 +95,7 @@ function NewsCard({ article }) {
             {expanded && article.content && article.content.length > 50 && (
               <>
                 <br /><br />
-                {article.content.replace(/\[\+\d+ chars\]/, "...")}
+                {article.content.replace(/\[\+\d+ chars\]/, "")}
               </>
             )}
           </p>
