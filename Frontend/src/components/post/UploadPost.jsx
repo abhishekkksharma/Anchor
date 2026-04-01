@@ -219,8 +219,8 @@ function UploadPostModal({ onClose, onSubmit }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-neutral-900 w-full max-w-[750px] rounded-2xl h-150 max-h-[85vh] flex flex-col shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6 md:p-4">
+      <div className="bg-white dark:bg-neutral-900 w-full max-w-[500px] md:max-w-[750px] rounded-2xl h-[450px] md:h-[600px] max-h-[85vh] flex flex-col shadow-2xl">
         {/* Header with User Info */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-200 dark:border-neutral-800">
           {/* User Info */}
