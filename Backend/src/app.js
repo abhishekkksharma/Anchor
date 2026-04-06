@@ -5,6 +5,7 @@ const path = require("path");
 const app = express();
 const userRoutes = require("./routes/user");
 const adminRoutes = require('./routes/admin');
+const newsRoutes = require('./routes/news');
 
 // middlewares
 app.use(cors({
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use('/user', userRoutes);
 app.use('/admin', adminRoutes);
+app.use('/api/news', newsRoutes);
 
 app.use((req, res) => {
     res.status(404).render("404", {

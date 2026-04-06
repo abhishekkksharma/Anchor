@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { TrendingUp, Clock, User } from "lucide-react";
-const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
+import { API_URL } from "../../config/api";
 import SkeletonCard from "./SkeletonCard";
 
 // 1. Restrict to high-quality tech and developer domains
@@ -146,8 +146,8 @@ export default function TechNews() {
     const fromDate = tenDaysAgo.toISOString().split('T')[0];
     
     try {
-      // 3. Changed sortBy to 'relevancy' and added domains and from parameter
-      const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(category.query)}&domains=${TECH_DOMAINS}&from=${fromDate}&language=en&sortBy=relevancy&pageSize=20&apiKey=${NEWS_API_KEY}`;
+      // 3. Request through backend proxy to bypass NewsAPI prod restrictions
+      const url = `${API_URL}/api/news/articles?q=${encodeURIComponent(category.query)}&domains=${TECH_DOMAINS}&from=${fromDate}&language=en&sortBy=relevancy&pageSize=20`;
       
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
