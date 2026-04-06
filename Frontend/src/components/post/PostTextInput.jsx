@@ -123,7 +123,7 @@ function PostTextInput({ content, setContent, maxLength, isSubmitting }) {
         onClick={handleRefine}
         disabled={isRefining || isSubmitting || !content.trim()}
         title="Refine with AI"
-        className={`absolute top-0 right-4 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200
+        className={`absolute top-0 right-4 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200
           ${
             isRefining
               ? "bg-indigo-500 text-white shadow-md"

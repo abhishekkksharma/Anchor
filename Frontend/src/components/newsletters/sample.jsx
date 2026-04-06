@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { TrendingUp, Clock, User } from "lucide-react";
-const NEWS_API_KEY = "353c11d7734a4837993646fd893c0961";
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY;
 import SkeletonCard from "./SkeletonCard";
 
 // 1. Restrict to high-quality tech and developer domains
@@ -193,7 +193,7 @@ export default function TechNews() {
       <div className="w-full mx-auto py-10">
 
         {/* Header */}
-        <div className="flex items-start justify-between mb-8">
+        <div className="flex items-start justify-between mb-8 px-4">
           <div>
             
             <p className="text-sm text-gray-400 mt-1">Latest in software, AI &amp; the dev ecosystem</p>
@@ -209,7 +209,7 @@ export default function TechNews() {
         </div>
 
         {/* Filter chips */}
-        <div className="flex gap-2 flex-wrap mb-8">
+        <div className="flex gap-2 flex-wrap mb-8 px-4">
           {CATEGORIES.map((cat, i) => (
             <button
               key={cat.label}
