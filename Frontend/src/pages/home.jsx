@@ -162,8 +162,9 @@ const Home = () => {
           {/* Infinite scroll loader */}
           <div
             ref={loaderRef}
-            className="flex items-center justify-center w-full py-4"
+            className="flex flex-col items-center justify-center w-full py-4"
           >
+            {loading && <PostSkeleton />}
             {loading && <PostSkeleton />}
           </div>
 

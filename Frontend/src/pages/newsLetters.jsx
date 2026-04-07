@@ -1,9 +1,13 @@
-import React from 'react'
+import {useEffect} from 'react'
 import Sidebar from '@/components/Sidebar'
 import ComingSoon from '@/components/ComingSoon'
 import Sample from "@/components/newsletters/sample"
 
 function NewsLetters() {
+  useEffect(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      // window.scrollTo(0, 0); //hard scroll
+    }, []);
   return (
     <div className='min-h-screen bg-neutral-50 dark:bg-black'>
       <Sidebar />

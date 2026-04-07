@@ -3,6 +3,7 @@ const Contact = require("../../models/contactFrom")
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { OAuth2Client } = require("google-auth-library");
+const { SendConnectionMail } = require("../../utils/mailer");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -403,6 +404,28 @@ async function handleVerifyOTP(req, res) {
   return res.json({ message: "Email verified successfully" });
 }
 
+async function handleSendConnectMail(req, res) {
+  try {
+    const connectionId = req.params.id;
+    const fromUserId = req.user.id;
+
+    const fromUser = await User.findById(fromUserId);
+    const toUser = await User.findById(connectionId);
+
+    if (!toUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await SendConnectionMail({
+      toEmail: toUser.email,
+      fromUser
+    });
+
+    res.status(200).json({ message: "Connection mail sent successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error sending mail", error });
+  }
+}
 
 module.exports = {
   handleUserSignup,
@@ -414,5 +437,6 @@ module.exports = {
   handleGetProfileByUsername,
   handleSavePostToUserData,
   handleUnsavePost,
-  handleGetSavedPosts
+  handleGetSavedPosts,
+  handleSendConnectMail
 };

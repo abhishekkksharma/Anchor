@@ -1,5 +1,5 @@
 const express = require('express');
-const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername, handleSavePostToUserData, handleUnsavePost, handleGetSavedPosts,handleGoogleAuth } = require('../controllers/user/user');
+const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername, handleSavePostToUserData, handleUnsavePost, handleGetSavedPosts,handleGoogleAuth,handleSendConnectMail } = require('../controllers/user/user');
 const { handleCreatePost, handleGetAllPosts, handleDeletePost, handleLikePost, handleGetUSerPosts, handleGetPostComments, handleAddComment } = require('../controllers/post/post');
 const { handleGetNearbyUsers, handleGetUserLocation, handleSetUserGeodata } = require("../controllers/connect/geoDataHandeler");
 const { handleAddGridArt, handleGetGrids } = require("../controllers/gridArt/grid")
@@ -32,6 +32,7 @@ router.get('/grid', handleGetGrids);
 
 
 router.get("/connect/nearby", authMiddleware, handleGetNearbyUsers);
+router.post("/connect/sendconnectMail/:id",authMiddleware,handleSendConnectMail);
 router.get("/userlocation", authMiddleware, handleGetUserLocation);
 router.post("/connect/usergeodata", authMiddleware, handleSetUserGeodata);
 

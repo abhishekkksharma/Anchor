@@ -64,7 +64,8 @@ async function handleGetAllPosts(req, res) {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate("author", "username name avatar");
+      .populate("author", "username name avatar")
+      .populate("comments.userId", "username avatar");
 
     const totalPosts = await Post.countDocuments();
 
@@ -76,7 +77,14 @@ async function handleGetAllPosts(req, res) {
 
     const postsWithLatestComment = posts.map((post) => {
       const obj = post.toObject();
-      obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      let latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      if (latestComment) {
+        // Map the populated userId back to username and avatar for the frontend
+        latestComment.username = latestComment.userId ? latestComment.userId.username : 'Unknown';
+        latestComment.avatar = latestComment.userId ? latestComment.userId.avatar : null;
+        latestComment.userId = latestComment.userId ? latestComment.userId._id : latestComment.userId;
+      }
+      obj.latestComment = latestComment;
       obj.commentsCount = obj.comments.length;
       obj.isSaved = savedSet.has(obj._id.toString());
       delete obj.comments;
@@ -177,7 +185,8 @@ async function handleGetUSerPosts(req, res) {
 
     const posts = await Post.find({ author: user._id })
       .sort({ createdAt: -1 })
-      .populate("author", "username name avatar");
+      .populate("author", "username name avatar")
+      .populate("comments.userId", "username avatar");
 
     // Fetch the logged-in user's saved post IDs for isSaved flag
     const currentUser = await User.findById(req.user.id).select("savedPosts").lean();
@@ -187,7 +196,13 @@ async function handleGetUSerPosts(req, res) {
 
     const postsWithLatestComment = posts.map((post) => {
       const obj = post.toObject();
-      obj.latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      let latestComment = obj.comments.length > 0 ? obj.comments[obj.comments.length - 1] : null;
+      if (latestComment) {
+        latestComment.username = latestComment.userId ? latestComment.userId.username : 'Unknown';
+        latestComment.avatar = latestComment.userId ? latestComment.userId.avatar : null;
+        latestComment.userId = latestComment.userId ? latestComment.userId._id : latestComment.userId;
+      }
+      obj.latestComment = latestComment;
       obj.commentsCount = obj.comments.length;
       obj.isSaved = savedSet.has(obj._id.toString());
       delete obj.comments;
@@ -208,13 +223,20 @@ async function handleGetPostComments(req, res) {
   try {
     const { id } = req.params;
 
-    const post = await Post.findById(id).select("comments").lean();
+    const post = await Post.findById(id).select("comments").populate("comments.userId", "username avatar").lean();
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    const comments = (post.comments || []).slice().reverse(); // newest first
+    const comments = (post.comments || []).map(comment => {
+      return {
+        ...comment,
+        username: comment.userId ? comment.userId.username : 'Unknown',
+        avatar: comment.userId ? comment.userId.avatar : null,
+        userId: comment.userId ? comment.userId._id : comment.userId
+      };
+    }).reverse(); // newest first
 
     return res.status(200).json({
       message: "Comments fetched successfully",
@@ -254,8 +276,6 @@ async function handleAddComment(req, res) {
 
     const newComment = {
       userId,
-      username: user.username,
-      avatar: user.avatar || null,
       text: text.trim(),
       createdAt: new Date(),
     };
@@ -263,11 +283,16 @@ async function handleAddComment(req, res) {
     post.comments.push(newComment);
     await post.save();
 
-    const savedComment = post.comments[post.comments.length - 1];
+    const savedCommentObj = post.comments[post.comments.length - 1].toObject();
+    const savedCommentForFrontend = {
+      ...savedCommentObj,
+      username: user.username,
+      avatar: user.avatar || null,
+    };
 
     return res.status(201).json({
       message: "Comment added successfully",
-      comment: savedComment,
+      comment: savedCommentForFrontend,
       totalComments: post.comments.length,
     });
   } catch (error) {

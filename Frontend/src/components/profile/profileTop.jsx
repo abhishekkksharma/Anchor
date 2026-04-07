@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { resolveAvatar } from "@/utils/avatarHelper";
+import { sendConnectRequest } from "@/utils/connectUtils";
 import { useAuth } from "@/context/AuthContext";
 import { Link, Pen, X } from "lucide-react";
 import EditProfileModal from "./EditProfileModal";
@@ -13,6 +14,23 @@ function ProfileTop({ username }) {
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectMessage, setConnectMessage] = useState("");
+
+  const handleConnect = async () => {
+    if (!profileUser || !profileUser._id) return;
+    try {
+      setIsConnecting(true);
+      setConnectMessage("");
+      await sendConnectRequest(profileUser._id);
+      setConnectMessage("Request sent!");
+    } catch (err) {
+      setConnectMessage(err.message || "Failed to connect");
+    } finally {
+      setIsConnecting(false);
+      setTimeout(() => setConnectMessage(""), 3000);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,7 +100,7 @@ function ProfileTop({ username }) {
                 <Link className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
 
-              {isOwnProfile && (
+              {isOwnProfile ? (
                 <button
                   onClick={() => setIsEditModalOpen(true)}
                   className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
@@ -92,6 +110,23 @@ function ProfileTop({ username }) {
                     Edit Profile
                   </span>
                 </button>
+              ) : (
+                <div className="flex items-center gap-3">
+                  {connectMessage && (
+                    <span className="text-sm font-medium text-green-600 dark:text-green-400">
+                      {connectMessage}
+                    </span>
+                  )}
+                  <button
+                    onClick={handleConnect}
+                    disabled={isConnecting}
+                    className="lg:mt-18 hover:text-gray-300 dark:hover:text-gray-700 transition-colors flex items-center gap-2 px-4 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-black dark:bg-gray-100 text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-200 disabled:opacity-50"
+                  >
+                    <span className="text-sm font-medium">
+                      {isConnecting ? "Sending..." : "Connect"}
+                    </span>
+                  </button>
+                </div>
               )}
             </div>
           </div>

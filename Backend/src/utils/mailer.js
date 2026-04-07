@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const User = require("../models/user.js");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -81,4 +82,29 @@ const sendOTP = async (email, otp) => {
   });
 };
 
-module.exports = sendOTP;
+// const nodemailer = require("nodemailer");
+
+async function SendConnectionMail({ toEmail, fromUser }) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: toEmail,
+    subject: "New Connection Request",
+    html: `
+      <h2>${fromUser.name} wants to connect with you</h2>
+      <p>Email: ${fromUser.email}</p>
+      <p>Message: Let's connect and collaborate!</p>
+    `
+  };
+
+  return await transporter.sendMail(mailOptions);
+}
+
+module.exports = {sendOTP,SendConnectionMail};
