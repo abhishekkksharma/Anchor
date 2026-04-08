@@ -8,7 +8,7 @@ const { setupSocket } = require("./src/socket");
 const PORT = process.env.PORT || 5000;
 const MONGODB_URL = process.env.MONGODB_URL;
 
-// Create HTTP server and attach Socket.IO
+// Create HTTP server and attach Socket.IO - changes protocols
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
