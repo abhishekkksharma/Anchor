@@ -16,7 +16,7 @@ function NewsLetters() {
           <Sample />
         </div>
       </main>
-      <ComingSoon />
+      {/* <ComingSoon /> */}
     </div>
     // <div className='min-h-screen flex justify-center items-center dark:bg-black'>
     //     <Sidebar/>
