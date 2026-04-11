@@ -1,5 +1,6 @@
 const User = require("../../models/user");
 const Contact = require("../../models/contactFrom")
+const Post = require("../../models/post");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { OAuth2Client } = require("google-auth-library");
@@ -427,6 +428,70 @@ async function handleSendConnectMail(req, res) {
   }
 }
 
+async function handleDeleteUser(req,res) {
+  try {
+    const username = String(req.params.username || "").trim().toLowerCase();
+    const requesterId = req.user?.id;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    if (!requesterId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const targetUser = await User.findOne({ username }).select("_id username");
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (targetUser._id.toString() !== requesterId.toString()) {
+      const requester = await User.findById(requesterId).select("isAdmin").lean();
+      if (!requester?.isAdmin) {
+        return res.status(403).json({ message: "You can only delete your own account" });
+      }
+    }
+
+    // Delete comments made by this user on all posts.
+    await Post.updateMany(
+      { "comments.userId": targetUser._id },
+      { $pull: { comments: { userId: targetUser._id } } }
+    );
+
+    // Capture authored post IDs so we can remove saved references from other users.
+    const authoredPosts = await Post.find({ author: targetUser._id }).select("_id").lean();
+    const authoredPostIds = authoredPosts.map((post) => post._id);
+
+    // Delete all posts created by this user.
+    await Post.deleteMany({ author: targetUser._id });
+
+    if (authoredPostIds.length > 0) {
+      await User.updateMany(
+        { savedPosts: { $in: authoredPostIds } },
+        { $pull: { savedPosts: { $in: authoredPostIds } } }
+      );
+    }
+
+    // Remove user likes from remaining posts.
+    await Post.updateMany(
+      { likes: targetUser._id },
+      { $pull: { likes: targetUser._id } }
+    );
+
+    await User.deleteOne({ _id: targetUser._id });
+
+    return res.status(200).json({
+      message: "User, posts, and comments deleted successfully",
+      deletedUsername: targetUser.username,
+      deletedPostsCount: authoredPostIds.length,
+    });
+  } catch (error) {
+    console.error("Error deleting user account:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
 module.exports = {
   handleUserSignup,
   handleUserLogin,
@@ -438,5 +503,6 @@ module.exports = {
   handleSavePostToUserData,
   handleUnsavePost,
   handleGetSavedPosts,
-  handleSendConnectMail
+  handleSendConnectMail,
+  handleDeleteUser
 };

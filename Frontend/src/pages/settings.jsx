@@ -6,6 +6,7 @@ import UpdateLocation from "@/components/Connect/UpdateLocation";
 import EditProfileModal from "@/components/profile/EditProfileModal";
 import Location from "@/components/settings/Location";
 import { ArrowBigLeft } from "lucide-react"
+import DeleteAccountButton from "@/components/settings/DeleteAccountButton";
 
 function Settings() {
   const { tab } = useParams();
@@ -28,7 +29,10 @@ function Settings() {
         );
 
       case "update-account-data":
-        return <EditProfileModal inline={true} />;
+        return <div>
+          <EditProfileModal inline={true} />
+          <DeleteAccountButton/>
+          </div>;
 
       case "story":
         return <ComingSoon message="Story Settings" />;
