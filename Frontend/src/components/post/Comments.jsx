@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {Link} from "react-router-dom"
 import { Loader2, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../config/api';
@@ -116,9 +117,9 @@ function Comments({ postId, latestComment, commentsCount: initialCount, currentU
             </div>
             <div className="flex-1 min-w-0">
                 <div className="bg-neutral-100 dark:bg-neutral-800 rounded-2xl px-3 py-2">
-                    <span className="font-semibold text-xs text-neutral-900 dark:text-neutral-100 mr-1.5">
+                    <Link to={`/profile/${comment.username}`} className="font-semibold text-xs text-neutral-900 dark:text-neutral-100 mr-1.5">
                         @{comment.username}
-                    </span>
+                    </Link>
                     <span className="text-sm text-neutral-800 dark:text-neutral-200 break-words">
                         {comment.text}
                     </span>
@@ -149,9 +150,9 @@ function Comments({ postId, latestComment, commentsCount: initialCount, currentU
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="bg-neutral-100 dark:bg-neutral-800 rounded-2xl px-3 py-2">
-                                <span className="font-semibold text-xs text-neutral-900 dark:text-neutral-100 mr-1.5">
+                                <Link to={`/profile/${latestComment.username}`} className="font-semibold hover:underline text-xs text-neutral-900 dark:text-neutral-100 mr-1.5">
                                     @{latestComment.username}
-                                </span>
+                                </Link>
                                 <span className="text-sm text-neutral-700 dark:text-neutral-300 line-clamp-1">
                                     {latestComment.text}
                                 </span>
