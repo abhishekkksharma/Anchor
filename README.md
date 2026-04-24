@@ -18,6 +18,9 @@
 | Contact | Contact/Feedback/Suggestion form with type selector |
 | Dark Mode | System-aware dark/light mode toggle throughout the UI |
 | Geo Data | Users can set their location; proximity search powered by MongoDB 2dsphere index |
+| Community Chat | Real-time, paginated global chat powered by Socket.io |
+| Email Connect | Send connection requests to users discovered via the map using Nodemailer |
+| Tech News | Proxy functionality for fetching tech news bypassing constraints |
 
 ---
 
@@ -34,6 +37,7 @@
 | Lucide React | Icon library |
 | MapLibre GL | Interactive map for Connect page |
 | Axios | HTTP client (used in select areas) |
+| Socket.io-client | Web socket client for real-time chat |
 
 ### Backend
 | Tech | Purpose |
@@ -41,6 +45,8 @@
 | Node.js + Express 5 | REST API server |
 | MongoDB + Mongoose | Database & ODM |
 | JSON Web Token (JWT) | Stateless authentication |
+| Socket.io | WebSocket server for real-time chat |
+| Nodemailer | Dispatching connection emails |
 | dotenv | Environment variable management |
 | nodemon | Dev auto-restart |
 | EJS | Server-side 404 view |
@@ -60,6 +66,8 @@ Anchor/
 │       │   ├── connect.jsx    # Nearby users map
 │       │   ├── contact.jsx    # Contact / feedback form
 │       │   ├── about.jsx      # About page
+│       │   ├── comunity.jsx   # Community chat and sidebar
+│       │   ├── newsLetters.jsx# Tech news and newsletters
 │       │   ├── Login.jsx
 │       │   └── Signup.jsx
 │       ├── components/
@@ -86,7 +94,8 @@ Anchor/
 │       │   ├── ProtectedRoute.jsx      # Auth guard wrapper
 │       │   └── ThemeToggle.jsx
 │       ├── context/
-│       │   └── AuthContext.jsx         # Global auth state (user, token)
+│       │   ├── AuthContext.jsx         # Global auth state (user, token)
+│       │   └── SocketContext.jsx       # Global Socket.io connections
 │       ├── config/
 │       │   └── api.js                  # API_URL constant
 │       └── utils/
@@ -106,7 +115,7 @@ Anchor/
         │   └── user.js         # All user + post routes
         ├── mildewares/
         │   └── authMiddleware.js
-        └── app.js              # Express app setup
+        └── server.js           # Server + Socket.io entry
 ```
 
 ---

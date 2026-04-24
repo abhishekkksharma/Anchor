@@ -22,6 +22,8 @@ The platform is built using a modern, robust JavaScript ecosystem:
 - **Database:** MongoDB with Mongoose ODM (NoSQL database for flexible data modeling)
 - **Authentication:** JWT (JSON Web Tokens) for secure, stateless user sessions
 - **Storage/Media:** Cloudinary (For uploading and serving user avatars and post images)
+- **Real-Time/WebSockets:** Socket.io (For real-time community chat)
+- **Email/Comm:** Nodemailer (For dispatching user connection request emails)
 
 ## Core Features
 
@@ -43,8 +45,10 @@ The standout feature of Anchor is its **Connect** page (`/connect`).
 - **Avatars:** Support for custom uploaded Cloudinary avatars or fallback deterministic UI avatars.
 
 ### 4. Community & Support
-- **Newsletters:** Users can opt-in to platform updates.
-- **Contact/Feedback:** A dedicated contact form (`/contact`) supporting different submission types (Contact, Feedback, Suggestion).
+- **Community Chat:** A dedicated, real-time global chat interface powered by Socket.io, featuring cursor-based pagination and a sleek, responsive design.
+- **News/Newsletters:** A dedicated page with a backend proxy to serve tech news.
+- **Connections:** Users can dispatch formal connection request emails to others they discover.
+- **Contact/Feedback:** A dedicated contact form (`/contact`) supporting different submission types.
 - **Admin Dashboard:** Specific backend routes exist for administrators to view all users and read contact form submissions.
 
 ## Project Structure
@@ -56,7 +60,8 @@ The project follows a clean separation of concerns:
   - `src/pages/`: Full-page views (Home, Connect, Profile, Auth, etc.).
   - `src/utils/` & `src/lib/`: Helper functions (e.g., resolving avatar URLs).
   
-- **`/Backend/`**: Contains the Express server.
+- **`/Backend/`**: Contains the Express server and WebSocket integration.
+  - `server.js`: Entry point initializing Express and Socket.io.
   - `src/models/`: Mongoose schemas (`User.js`, `Post.js`).
   - `src/controllers/`: Business logic for handling requests.
   - `src/routes/`: API endpoint definitions (`user.js`, `admin.js`).
