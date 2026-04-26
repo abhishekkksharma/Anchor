@@ -249,9 +249,9 @@ function Post({ post, initialSaved, onDelete }) {
                 </div>
 
                 {/* Share */}
-                <button className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                {/* <button className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
                     <Send className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-                </button>
+                </button> */}
             </div>
 
             {/* Comments Section */}
