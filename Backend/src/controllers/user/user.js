@@ -492,6 +492,44 @@ async function handleDeleteUser(req,res) {
   }
 }
 
+
+async function handleSearchForUser(req, res) {
+  try {
+    // Treating req.params.id as the search term based on your function signature
+    const searchTerm = req.params.id;
+
+    if (!searchTerm) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Search term is required" 
+      });
+    }
+
+    // Search for users where the 'username' OR 'name' matches the search term
+    const users = await User.find({
+      $or: [
+        { username: { $regex: searchTerm, $options: 'i' } },
+        { name: { $regex: searchTerm, $options: 'i' } }
+      ]
+    })
+    .select('avatar username name about') // CRITICAL: Never send passwords to the frontend
+    .limit(20);          // Limit results so a broad search doesn't crash your server
+
+    return res.status(200).json({
+      success: true,
+      data: users
+    });
+
+  } catch (error) {
+    console.error("Error searching for user:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Internal server error" 
+    });
+  }
+}
+
+
 module.exports = {
   handleUserSignup,
   handleUserLogin,
@@ -504,5 +542,6 @@ module.exports = {
   handleUnsavePost,
   handleGetSavedPosts,
   handleSendConnectMail,
-  handleDeleteUser
+  handleDeleteUser,
+  handleSearchForUser
 };

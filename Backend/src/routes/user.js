@@ -1,5 +1,5 @@
 const express = require('express');
-const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername, handleSavePostToUserData, handleUnsavePost, handleGetSavedPosts, handleGoogleAuth, handleSendConnectMail, handleDeleteUser } = require('../controllers/user/user');
+const { handleUserSignup, handleUserLogin, handleUserData, handleCreateContact, handleUpdateUserData, handleGetProfileByUsername, handleSavePostToUserData, handleUnsavePost, handleGetSavedPosts, handleGoogleAuth, handleSendConnectMail, handleDeleteUser,handleSearchForUser } = require('../controllers/user/user');
 const { handleCreatePost, handleGetAllPosts, handleDeletePost, handleLikePost, handleGetUSerPosts, handleGetPostComments, handleAddComment } = require('../controllers/post/post');
 const { handleGetNearbyUsers, handleGetUserLocation, handleSetUserGeodata } = require("../controllers/connect/geoDataHandeler");
 const { handleAddGridArt, handleGetGrids } = require("../controllers/gridArt/grid")
@@ -17,6 +17,7 @@ router.get('/profile', handleGetProfileByUsername);
 router.post('/post/savepost/:id', authMiddleware, handleSavePostToUserData);
 router.delete('/post/savepost/:id', authMiddleware, handleUnsavePost);
 router.get('/post/savedposts/:username', authMiddleware, handleGetSavedPosts);
+router.get('/profiles/:id',authMiddleware,handleSearchForUser);
 
 router.post('/post/create', authMiddleware, handleCreatePost);
 router.get('/post/allPosts', authMiddleware, handleGetAllPosts);

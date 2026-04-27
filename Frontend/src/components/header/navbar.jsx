@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AnimatedThemeToggler } from '../ui/animated-theme-toggler';
 import Profile from './Profile';
 import Logo from "../../assets/logo.png";
+import ExpandableSearchBar from './ExpandableSearchBar';
 
 const Navbar = () => {
   return (
@@ -20,6 +21,7 @@ const Navbar = () => {
 
       {/* Right side */}
       <div className='flex items-center gap-3 md:gap-6'>
+        <ExpandableSearchBar/>
         <AnimatedThemeToggler />
         <Profile />
       </div>
