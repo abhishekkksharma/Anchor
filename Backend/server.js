@@ -17,7 +17,7 @@ const io = new Server(server, {
   },
 });
 
-// Initialize WebSocket handlers
+// Initialize WebSoc ket handlers
 setupSocket(io);
 
 server.listen(PORT, () => {

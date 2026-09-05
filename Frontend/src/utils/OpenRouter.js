@@ -16,7 +16,7 @@ export async function refineText(content, instruction) {
         "X-Title": "Anchor"
       },
       body: JSON.stringify({
-        model: "openai/gpt-4o-mini",
+        model: "openrouter/free",
         messages: [
           {
             role: "system",
